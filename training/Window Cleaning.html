@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window & Glass Cleaning - Interactive Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-link.active {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-link:not(.active):hover {
+            background-color: #E5E7EB;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+        }
+        .trouble-item.active {
+            background-color: #EBF8FF;
+            border-left-color: #3B82F6;
+        }
+        .solution-content {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+            <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+            <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for window and glass cleaning. Your safety is our top priority.</p>
+            <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear appropriate **PPE**, including safety glasses and gloves.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use **ladders safely**: ensure they are stable, on level ground, and rated for your weight.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>**Never overreach** when working on a ladder. Reposition the ladder as needed.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Be aware of **electrical outlets or fixtures** near cleaning areas.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use **non-slip footwear** on wet surfaces.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure proper ventilation when using cleaning solutions.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>**Secure all tools** when working at heights to prevent drops.</span></div>
+            </div>
+            <div class="mt-8">
+                <label for="safety-ack" class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+                </label>
+            </div>
+            <div class="mt-6 text-right">
+                <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">Window & Glass Cleaning</h1>
+            <p class="text-lg text-gray-500 mt-2">Interactive Training & Best Practices</p>
+        </header>
+
+        <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+            <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+            <a data-target="maintenance" class="nav-link">🧽 Tool Care</a>
+            <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+            <a data-target="resources" class="nav-link">🔗 Resources</a>
+        </nav>
+
+        <div id="guide" class="content-section active">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Full Cleaning Guide</h2>
+                <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of the window and glass cleaning process. Expand each section to see the detailed steps.</p>
+                <div class="space-y-4">
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-black">Preparation & Setup</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Pre-Cleaning Assessment & Safety First:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Conduct a Site Survey and Risk Assessment: Identify glass type (e.g., coated, tinted, self-cleaning), assess existing condition (scratches, chips, residue), plan height and access, identify delicate surrounding areas, note obstacles, locate water source/drainage, and check weather conditions.</li>
+                                        <li>Communicate with Site Management: Confirm access permissions, water/power availability, coordinate work schedule, and establish a procedure for reporting pre-existing damage before starting.</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Protection of Surfaces and People:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Protect the Immediate Area: Lay waterproof drop cloths or plastic sheeting on sills, floors, furniture, and adjacent surfaces. Consider low-tack painter's tape for delicate frames. Erect "Wet Floor" or "Work in Progress" signs and use barricades if needed.</li>
+                                        <li>Personal Protective Equipment (PPE): Wear safety glasses/goggles, chemical-resistant gloves, non-slip footwear, high-visibility clothing (on sites), a hard hat (if required), and a safety harness/lanyard (if working at height).</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Equipment and Solution Preparation:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Gather and Check Equipment: Ensure you have clean buckets, correct squeegee sizes with sharp blades (and spares), an applicator/washer, scrapers (use with extreme caution, only on toughened glass, and wet), lint-free detailing cloths, non-abrasive sponges, stable ladders/access equipment, water-fed pole system (if applicable), vacuum, and rubbish bags.</li>
+                                        <li>Prepare Cleaning Solutions: Use a professional-grade, pH-neutral glass cleaner diluted per instructions. For heavy soiling, a mild, non-abrasive detergent can be used. Have specialty removers (solvent-based for sticky residue, acidic for mineral deposits if trained and safe). Always have clean water; de-ionized/purified water is best for streak-free results.</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Initial Site Preparation and Debris Removal:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Clear the area by moving furniture or materials away from windows.</li>
+                                        <li>Brush or vacuum frames, sills, and tracks to remove loose dust and debris, preventing scratches.</li>
+                                        <li>Carefully remove any labels, tape, or stickers using a plastic scraper or appropriate solvent after testing.</li>
+                                        <li>Perform an Initial Scrape if necessary for dried mortar or paint, using a sharp, fresh blade at a very shallow angle on a *wet* surface, never on dry glass. Exercise extreme caution, especially on coated glass, and note that many contractors avoid scrapers on modern glass due to damage risk.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Cleaning Procedure</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Initial Cleaning (Builders' Clean - Focus on Removing Construction Residue):</strong>
+                                    <p class="text-black mt-2">This stage is about removing the bulk of the construction-related grime.</p>
+
+                                    <ul class="list-disc list-outside pl-6 space-y-1 mt-2 text-black">
+                                        <li><strong class="font-semibold text-black">Wet the Glass Thoroughly:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Using your applicator/washer, liberally wet the entire glass surface with your pre-mixed cleaning solution. Ensure all areas are covered. This helps to loosen dirt and lubricate the surface for scraping.</li>
+                                                <li>For extremely dirty glass, you might need to apply the solution, let it dwell for a minute or two (without drying), and then re-wet.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Agitate and Loosen Dirt:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Vigorously scrub the glass with your wet applicator, paying special attention to areas with visible dirt, plaster, or paint splashes.</li>
+                                                <li>Work the solution into all corners and edges.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Address Stubborn Residues (with extreme caution):</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li><strong class="font-semibold text-black">Scraping (if necessary and safe):</strong> If, after wetting, there are still stubborn specks of paint, silicone, mortar, or plaster, and only if you are absolutely certain the glass type is safe for scraping (e.g., standard annealed toughened glass, not coated or delicate types):
+                                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                                        <li>Always keep the glass very wet.</li>
+                                                        <li>Use a fresh, sharp razor blade scraper at a very low angle (almost flat, about 10-15 degrees) to gently lift the residue.</li>
+                                                        <li>Work in one direction, not back and forth.</li>
+                                                        <li>Wipe the blade frequently to remove debris.</li>
+                                                        <li><strong class="font-semibold text-black">Important Note:</strong> The safest practice, especially with modern glass, is to avoid scrapers if possible. Many scratches are caused by improper scraping or microscopic debris caught under the blade. If in doubt, do not scrape.</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong class="font-semibold text-black">Specialty Removers:</strong> For adhesives, silicone, or paint, apply the appropriate solvent or chemical remover (tested previously on an inconspicuous area) directly to the residue using a clean cloth. Let it dwell for the recommended time, then gently rub off. Re-wet the glass area with your standard cleaning solution immediately after to wash away chemical residue.</li>
+                                                <li><strong class="font-semibold text-black">Non-Abrasive Pads:</strong> For general grime that's stuck but not requiring scraping, a non-abrasive white or blue scrub pad (designed for glass) can be used with your solution.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Clean Frames and Sills:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Before squeegeeing the glass, thoroughly clean the window frames, sills, and tracks. This prevents dirty water from dripping onto your newly cleaned glass.</li>
+                                                <li>Use a clean cloth and your general cleaning solution (or a separate all-purpose cleaner if frames are heavily soiled). Pay attention to removing paint drips, plaster dust, and general construction grime.</li>
+                                                <li>For uPVC frames, a PVC cleaner can be effective, but always test first.</li>
+                                                <li>Wipe out tracks with a damp cloth or vacuum if needed.</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Squeegeeing for a Streak-Free Finish:</strong>
+                                    <p class="text-black mt-2">This is the key to professional-looking windows.</p>
+                                    <ul class="list-disc list-outside pl-6 space-y-1 mt-2 text-black">
+                                        <li><strong class="font-semibold text-black">Prepare Your Squeegee:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Ensure the rubber blade is clean and free of nicks or debris. A damaged blade will leave streaks.</li>
+                                                <li>If using a traditional squeegee, ensure the channel is securely fastened.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Overlap Method:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li><strong class="font-semibold text-black">Top Edge First:</strong> Start by squeegeeing a clean strip across the very top of the window, about an inch from the frame. This creates a "dry edge" to work from.</li>
+                                                <li><strong class="font-semibold text-black">Downward Strokes (or Side-to-Side):</strong>
+                                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                                        <li><strong class="font-semibold text-black">Option A (Professional/Faster): Overlapping Downward Strokes:</strong> Place the squeegee on the dry edge at the top corner. Pull it down in a straight, overlapping stroke, ensuring the squeegee blade slightly overlaps the previous stroke (about 1-2 inches).</li>
+                                                        <li><strong class="font-semibold text-black">Option B (Common/Easier): Side-to-Side Overlapping:</strong> Start at the top corner. Pull the squeegee horizontally across the top, pivot slightly, and pull down diagonally to create a fanning motion, overlapping each previous stroke.</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong class="font-semibold text-black">Maintain Constant Pressure:</strong> Apply consistent, even pressure across the entire blade. Too much pressure can cause drag; too little can leave streaks.</li>
+                                                <li><strong class="font-semibold text-black">Angle:</strong> Hold the squeegee at a slight angle (around 15-20 degrees) to the glass, allowing the dirty water to run down ahead of the blade.</li>
+                                                <li><strong class="font-semibold text-black">Wipe the Blade:</strong> After each stroke, wipe the squeegee blade clean with a clean microfiber cloth. This prevents transferring dirt back onto the glass.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Bottom Edge and Corners:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Ensure you squeegee right down to the bottom frame.</li>
+                                                <li>For the very bottom edge, you may need to use a clean detailing cloth to absorb any remaining water or a small squeegee for tight spots.</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Detailing and Final Inspection (Sparkle Clean Focus):</strong>
+                                    <p class="text-black mt-2">This stage is about perfection and ensuring no residue is left behind.</p>
+                                    <ul class="list-disc list-outside pl-6 space-y-1 mt-2 text-black">
+                                        <li><strong class="font-semibold text-black">Detail the Edges and Corners:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Immediately after squeegeeing each section, use a clean, dry, lint-free detailing cloth (microfiber or huck towel) to wipe the perimeter of the window where the squeegee couldn't reach perfectly.</li>
+                                                <li>Wipe off any drips or streaks on the frames or sills.</li>
+                                                <li>Change detailing cloths frequently as they become damp or dirty.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Inspect for Streaks and Smudges:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Step back and visually inspect the glass from different angles and in varying light conditions (if possible).</li>
+                                                <li>Look for any streaks, smudges, or missed spots.</li>
+                                                <li>If you find any, re-wet the affected area with your solution and re-squeegee or carefully wipe with a clean, dry detailing cloth.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Clean Interior Glass:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Repeat the entire process for the interior side of the glass. Pay extra attention to protecting interior finishes.</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong class="font-semibold text-black">Final Wipe-Down of Frames and Sills:</strong>
+                                            <ul class="list-disc list-outside pl-6 space-y-1">
+                                                <li>Once the glass is pristine, give a final wipe-down to the window frames, sills, and ledges to ensure they are completely clean and dry, removing any watermarks or leftover residue.</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Post-Cleaning Procedures:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1 mt-2 text-black">
+                                        <li><strong class="font-semibold text-black">Remove Protection:</strong> Carefully roll up or gather your drop cloths and sheeting, ensuring not to spread any collected debris.</li>
+                                        <li><strong class="font-semibold text-black">Waste Disposal:</strong> Dispose of all waste, including used cleaning cloths, tape, and labels, in designated rubbish bins.</li>
+                                        <li><strong class="font-semibold text-black">Clean Equipment:</strong> Rinse out buckets, clean squeegee blades, wash applicator sleeves, and hang cloths to dry. Proper equipment maintenance prolongs their life and ensures readiness for the next job.</li>
+                                        <li><strong class="font-semibold text-black">Report Issues:</strong> Document and report any issues encountered during cleaning, such as pre-existing damage, persistent staining, or any problems with the window itself, to the site manager.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Post-Cleaning</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                           <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li>Clean up any drips or spills on surrounding surfaces.</li>
+                                <li>Rinse all tools (squeegee, scrubber, buckets) with clean water.</li>
+                                <li>Dry tools thoroughly to prevent rust and mildew.</li>
+                                <li>Store all cleaning supplies in a designated, clean, and dry area.</li>
+                                <li>Replace any moved furniture or items.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="maintenance" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Tool Care & Maintenance</h2>
+                <p class="text-gray-600 mb-6">Proper care of your cleaning tools ensures their longevity and optimal performance.</p>
+                <ul class="space-y-4">
+                    <li class="flex items-center bg-gray-100 p-4 rounded-lg"><span class="text-2xl mr-4">1️⃣</span><div><strong class="block text-gray-800">Squeegee Blade Inspection & Cleaning:</strong> Regularly check blades for nicks, tears, or hardening. Clean with soap and water after each use.</div></li>
+                    <li class="flex items-center bg-gray-100 p-4 rounded-lg"><span class="text-2xl mr-4">2️⃣</span><div><strong class="block text-gray-800">Scrubber/Applicator Cleaning:</strong> Rinse thoroughly after each use to remove all cleaning solution and debris. Allow to air dry completely.</div></li>
+                    <li class="flex items-center bg-gray-100 p-4 rounded-lg"><span class="text-2xl mr-4">3️⃣</span><div><strong class="block text-gray-800">Cloth Care:</strong> Wash lint-free cloths regularly. Do not use fabric softener, as it can leave residue.</div></li>
+                    <li class="flex items-center bg-gray-100 p-4 rounded-lg"><span class="text-2xl mr-4">4️⃣</span><div><strong class="block text-gray-800">Bucket Hygiene:</strong> Clean buckets thoroughly after each use to prevent buildup of residue or contaminants.</div></li>
+                    <li class="flex items-center bg-gray-100 p-4 rounded-lg"><span class="text-2xl mr-4">5️⃣</span><div><strong class="block text-gray-800">Ladder Inspection:</strong> Before each use, inspect ladders for damage, loose rivets, or worn feet. Clean rungs if soiled.</div></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="troubleshooting" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+                <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For persistent problems, consult a supervisor.</p>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3">
+                        <ul class="space-y-2">
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Streaks left on glass</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Drips or excessive water runoff</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Glass appears hazy after cleaning</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Difficulty removing stubborn grime</button></li>
+                        </ul>
+                    </div>
+                    <div class="md:w-2/3">
+                        <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+                            <p>Select an issue from the list to view solutions here.</p>
+                        </div>
+                        <div id="solution1" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Streaks Left on Glass</h3>
+                            <p><strong>Possible Causes:</strong> Worn/damaged squeegee blade, dirty squeegee blade, improper squeegee angle, too much or too little solution, dirty cloths.</p>
+                            <p><strong>Solutions:</strong> Replace worn blade, clean blade thoroughly, adjust squeegee angle to 45 degrees, use correct solution ratio, use clean lint-free cloths.</p>
+                        </div>
+                        <div id="solution2" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Drips or Excessive Water Runoff</h3>
+                            <p><strong>Possible Causes:</strong> Too much cleaning solution applied, squeegee not wiped clean between passes, squeegee angle incorrect.</p>
+                            <p><strong>Solutions:</strong> Use less solution, wipe squeegee blade after *every* stroke, ensure proper squeegee angle.</p>
+                        </div>
+                        <div id="solution3" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Glass Appears Hazy After Cleaning</h3>
+                            <p><strong>Possible Causes:</strong> Solution not rinsed off adequately, residue from cleaning solution, using soap that leaves residue, dirty water in bucket, fabric softener residue on cloths.</p>
+                            <p><strong>Solutions:</strong> Ensure thorough squeegee passes, use a streak-free cleaning solution, change water frequently, avoid fabric softener on cloths.</p>
+                        </div>
+                        <div id="solution4" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Difficulty Removing Stubborn Grime</h3>
+                            <p><strong>Possible Causes:</strong> Insufficient soaking time, wrong cleaning solution for the type of grime, or requires gentle scraping.</p>
+                            <p><strong>Solutions:</strong> Allow solution to soak for a few minutes, use a stronger or specialized glass cleaner for tough stains (e.g., hard water spots), carefully use a non-abrasive scraper for caked-on debris (e.g., paint, tape residue).</p>
+                        </div>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">🛠️ Troubleshooting Videos</h3>
+                        <p class="text-sm text-gray-600 mb-3">Explore common troubleshooting video guides for window cleaning.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/windowcleaningvideo1" target="_blank" class="hover:underline">Video: Eliminating Streaks</a></li>
+                            <li><a href="http://youtube.com/windowcleaningvideo2" target="_blank" class="hover:underline">Video: Dealing with Drips</a></li>
+                            <li><a href="http://youtube.com/windowcleaningvideo3" target="_blank" class="hover:underline">Video: Haze Removal Techniques</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resources" class="content-section">
+             <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+                <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">📄 Manufacturer's Guides & MSDS</h3>
+                        <p class="text-sm text-gray-600 mb-3">Access detailed product specifications and safety data sheets for cleaning solutions.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="file:///C:/Users/User1/Desktop/Web%20App/window_cleaner_manual.pdf" target="_blank" class="hover:underline">Access Window Cleaning Manual (Link)</a></li>
+                            <li><a href="file:///C:/Users/User1/Desktop/Web%20App/msds_glass_cleaner.pdf" target="_blank" class="hover:underline">MSDS: Glass Cleaner (Link)</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Basic Window Cleaning Techniques</h3>
+                        <p class="text-sm text-gray-600 mb-3">A step-by-step video guide covering basic window cleaning with a squeegee.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1 mt-3">
+                            <li><a href="http://youtube.com/windowcleaningtutorial1" target="_blank" class="hover:underline">Video: Squeegee Basics & Best Practices</a></li>
+                            <li><a href="http://youtube.com/windowcleaningtutorial2" target="_blank" class="hover:underline">Video: Proper Solution Application</a></li>
+                            <li><a href="http://youtube.com/windowcleaningtutorial3" target="_blank" class="hover:underline">Video: Cleaning Different Window Types</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Advanced Techniques & Ladders</h3>
+                        <p class="text-sm text-gray-600 mb-3">For experienced staff: learn advanced squeegee maneuvers and ladder safety.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/windowcleaningadvanced1" target="_blank" class="hover:underline">Video: Advanced Squeegee Fanning</a></li>
+                            <li><a href="http://youtube.com/windowcleaningadvanced2" target="_blank" class="hover:underline">Video: Ladder Safety & Setup for Window Cleaning</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const safetyModal = document.getElementById('safety-modal');
+            const safetyModalContent = document.getElementById('safety-modal-content');
+            const safetyAck = document.getElementById('safety-ack');
+            const proceedBtn = document.getElementById('proceed-btn');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(() => {
+                safetyModalContent.style.opacity = '1';
+                safetyModalContent.style.transform = 'scale(1)';
+            }, 100);
+
+            safetyAck.addEventListener('change', () => {
+                proceedBtn.disabled = !safetyAck.checked;
+            });
+
+            proceedBtn.addEventListener('click', () => {
+                safetyModal.style.transition = 'opacity 0.5s ease';
+                safetyModal.style.opacity = '0';
+                setTimeout(() => {
+                    safetyModal.style.display = 'none';
+                    mainContent.style.opacity = '1';
+                }, 500);
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    const target = link.getAttribute('data-target');
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = header.querySelector('span');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight;
+
+                    accordionItems.forEach(i => {
+                        i.querySelector('.accordion-content').style.maxHeight = null;
+                        i.querySelector('.accordion-content').style.padding = '0';
+                        i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isOpen) {
+                        content.style.maxHeight = (content.scrollHeight + 50) + "px"; // Increased buffer
+                        content.style.padding = '1rem 1.5rem';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const troubleItems = document.querySelectorAll('.trouble-item');
+            const solutionContents = document.querySelectorAll('.solution-content');
+            const solutionPlaceholder = document.getElementById('solution-placeholder');
+            troubleItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    troubleItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    solutionPlaceholder.style.display = 'none';
+
+                    const targetSolution = document.getElementById(item.dataset.solution);
+                    solutionContents.forEach(s => s.style.display = 'none');
+                    if(targetSolution) {
+                       targetSolution.style.display = 'block';
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victor Lynx 17″ Floor Burnisher - Interactive Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #DC2626;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #FEF2F2;
+      border-left-color: #DC2626;
+    }
+    .solution-content {
+      display: none;
+    }
+    .training-header {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    }
+    .burnisher-icon {
+      background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    }
+    .safety-icon {
+      background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    }
+    .maintenance-icon {
+      background: linear-gradient(135deg, #f0f9ff 0%, #bae6fd 100%);
+    }
+    .operation-icon {
+      background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-3xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Critical Safety Protocols!</h2>
+    <p class="mb-6 text-gray-600">Before operating the Victor Lynx 17″ High-Speed Floor Burnisher, you must read and acknowledge these critical safety protocols. High-speed burnishers can cause serious injury if operated incorrectly.</p>
+    <div class="space-y-4 max-h-64 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>slip-resistant footwear and safety goggles</strong> during operation.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Inspect machine before use</strong> - check power cord, plug, handle, and pad driver for damage.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Keep hands and feet away</strong> from the rotating pad at all times.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Never operate on wet floors</strong> unless specifically designed for wet polishing.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Clear work area</strong> of all obstacles, cords, and loose debris before operation.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>hearing protection</strong> for prolonged operation (machine operates at high RPM).</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Never leave machine unattended</strong> while powered on.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure <strong>proper ventilation</strong> when working in enclosed spaces.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Turn off and unplug</strong> before changing pads or maintenance.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Report any <strong>electrical issues or damage</strong> immediately to supervisor.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
+        <span class="ml-3 text-gray-700">I have read and understood these safety protocols and am authorized to operate high-speed floor burnishing equipment.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">Victor Lynx 17″ High-Speed Floor Burnisher</h1>
+    <p class="text-lg text-gray-500 mt-2">Interactive Training & Operation Guide</p>
+    <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+      <p class="font-semibold">⚡ High-Speed Equipment: 1500-2500 RPM Operation</p>
+      <p class="text-sm">Designed for vinyl, marble, terrazzo, and other hard floor surfaces</p>
+    </div>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+    <a data-target="operation" class="nav-link">⚙️ Operation</a>
+    <a data-target="maintenance" class="nav-link">🔧 Maintenance</a>
+    <a data-target="troubleshooting" class="nav-link">🛠️ Troubleshooting</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <div id="guide" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Complete Victor Lynx Burnisher Guide</h2>
+      <p class="text-gray-600 mb-6">This comprehensive guide covers all aspects of safe operation and maintenance of the Victor Lynx 17″ High-Speed Floor Burnisher. Expand each section for detailed information.</p>
+      
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">Machine Overview & Specifications</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="p-4 md:p-6 space-y-4 text-gray-700">
+              <div class="text-black">
+                <strong class="font-semibold text-black">Equipment Specifications:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>High-speed burnisher operating at 1500-2500 RPM</li>
+                  <li>17-inch pad size for efficient coverage</li>
+                  <li>Electric-powered motor designed for continuous operation</li>
+                  <li>Suitable for large-area floor maintenance</li>
+                  <li>Weight: Approximately 85-95 lbs</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Suitable Floor Types:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Vinyl composite tile (VCT)</li>
+                  <li>Marble and natural stone</li>
+                  <li>Terrazzo flooring</li>
+                  <li>Sealed concrete</li>
+                  <li>Other hard, smooth surfaces</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Key Components:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>High-speed motor housing</li>
+                  <li>Adjustable handle with control switch</li>
+                  <li>Pad driver plate (17-inch)</li>
+                  <li>Power cord with ground fault protection</li>
+                  <li>Dust skirt (if equipped)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Pre-Operation Safety & Setup</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="p-4 md:p-6 space-y-4 text-gray-700">
+              <div class="text-black">
+                <strong class="font-semibold text-black">Pre-Operation Inspection:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Inspect power cord and plug for damage, cuts, or exposed wires</li>
+                  <li>Check handle for secure attachment and proper operation</li>
+                  <li>Examine pad driver for wear, damage, or loose attachment</li>
+                  <li>Verify motor housing is intact with no cracks or damage</li>
+                  <li>Test switch operation before connecting to power</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Personal Protective Equipment:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Slip-resistant safety shoes (required)</li>
+                  <li>Safety goggles to protect from debris</li>
+                  <li>Hearing protection for extended operation</li>
+                  <li>Long pants to protect legs from debris</li>
+                  <li>Avoid loose clothing that could catch in machinery</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Work Area Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Remove all furniture, equipment, and obstacles from work area</li>
+                  <li>Clear floor of loose debris, cords, and small objects</li>
+                  <li>Ensure adequate lighting throughout work area</li>
+                  <li>Post appropriate signage ("Floor Burnishing in Progress")</li>
+                  <li>Verify proper ventilation, especially in enclosed spaces</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Pad Selection & Installation</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="p-4 md:p-6 space-y-4 text-gray-700">
+              <div class="text-black">
+                <strong class="font-semibold text-black">Pad Selection Guide:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li><strong>Ultra High-Speed Pads (White/Tan):</strong> For high-gloss burnishing and polishing</li>
+                  <li><strong>High-Speed Pads (Pink/Red):</strong> For light cleaning and polishing</li>
+                  <li><strong>Scrubbing Pads (Blue/Green):</strong> For removing scuff marks (use with caution)</li>
+                  <li><strong>Natural Hair Pads:</strong> For delicate surfaces requiring gentle polishing</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Safe Pad Installation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Always turn off and unplug machine before pad changes</li>
+                  <li>Carefully tilt machine onto its side on a stable surface</li>
+                  <li>Center pad precisely on the driver plate</li>
+                  <li>Press down firmly around entire circumference</li>
+                  <li>Ensure pad is completely flat with no wrinkles or air bubbles</li>
+                  <li>Return machine to upright position slowly and carefully</li>
+                </ul>
+              </div>
+              <div class="text-black">
+                <strong class="font-semibold text-black">Pad Condition Check:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1 mt-2">
+                  <li>Inspect pad for wear, tears, or embedded debris</li>
+                  <li>Replace pads when worn down to 50% original thickness</li>
+                  <li>Remove any foreign objects stuck to pad surface</li>
+                  <li>Ensure pad is appropriate for the floor type being burnished</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Post-Operation & Storage</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>Turn off machine and unplug immediately after use</li>
+              <li>Allow motor to cool completely before storage</li>
+              <li>Remove and inspect burnishing pad for wear</li>
+              <li>Clean pad driver and remove any debris buildup</li>
+              <li>Wipe down machine housing with clean, damp cloth</li>
+              <li>Inspect power cord and coil properly for storage</li>
+              <li>Store in designated area away from moisture and extreme temperatures</li>
+              <li>Report any equipment issues or damage to supervisor immediately</li>
+              <li>Complete maintenance log if required by facility protocols</li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="operation" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Operation Procedures</h2>
+      <p class="text-gray-600 mb-6">Master safe and effective operation techniques for optimal burnishing results.</p>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 operation-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔌</span>
+            <h3 class="font-semibold text-lg">Startup Procedure</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Position:</strong> Stand behind machine, grip handle firmly with both hands</li>
+            <li><strong>Power:</strong> Plug into grounded outlet, verify secure connection</li>
+            <li><strong>Start:</strong> Turn on switch (start at lowest speed if variable)</li>
+            <li><strong>Control:</strong> Allow machine to reach full speed before moving</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50 burnisher-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">↔️</span>
+            <h3 class="font-semibold text-lg">Movement Technique</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Pattern:</strong> Move in straight, overlapping passes</li>
+            <li><strong>Overlap:</strong> Each pass should overlap previous by 50%</li>
+            <li><strong>Speed:</strong> Maintain steady, controlled walking pace</li>
+            <li><strong>Pressure:</strong> Let machine weight provide pressure</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50 safety-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">⚠️</span>
+            <h3 class="font-semibold text-lg">Safety During Operation</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Awareness:</strong> Keep hands/feet away from rotating pad</li>
+            <li><strong>Movement:</strong> Avoid sudden direction changes</li>
+            <li><strong>Surface:</strong> Never operate on wet or damaged floors</li>
+            <li><strong>Supervision:</strong> Never leave machine unattended while running</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🎯</span>
+            <h3 class="font-semibold text-lg">Technique Tips</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Speed Adjustment:</strong> Start slow, increase based on floor condition</li>
+            <li><strong>Problem Areas:</strong> Make additional passes for scuffed areas</li>
+            <li><strong>Edges:</strong> Use smaller equipment for areas machine cannot reach</li>
+            <li><strong>Efficiency:</strong> Work systematically from far end toward exit</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-6 border p-4 rounded-lg bg-yellow-50 border-yellow-200">
+        <h3 class="font-semibold text-lg mb-2 text-yellow-800">⚡ High-Speed Operation Warning</h3>
+        <p class="text-sm text-yellow-700">This machine operates at extremely high speeds (1500-2500 RPM). Always maintain firm control and never attempt to stop the pad with hands or feet. The rotating pad can cause severe injury if proper safety procedures are not followed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="maintenance" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Maintenance Schedule</h2>
+      <p class="text-gray-600 mb-6">Regular maintenance ensures safe operation and extends equipment life.</p>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 maintenance-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">📅</span>
+            <h3 class="font-semibold text-lg">Daily Maintenance</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Remove and inspect burnishing pad</li>
+            <li>Clean pad driver plate thoroughly</li>
+            <li>Inspect power cord for damage</li>
+            <li>Wipe down machine housing</li>
+            <li>Check for loose bolts or components</li>
+            <li>Store in designated dry location</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔧</span>
+            <h3 class="font-semibold text-lg">Weekly Maintenance</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Deep clean pad driver and housing</li>
+            <li>Inspect handle assembly for wear</li>
+            <li>Check motor housing for debris buildup</li>
+            <li>Test all switches and controls</li>
+            <li>Lubricate pivot points if specified</li>
+            <li>Document any issues in maintenance log</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔬</span>
+            <h3 class="font-semibold text-lg">Monthly Inspection</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Comprehensive electrical inspection</li>
+            <li>Motor brush inspection (if applicable)</li>
+            <li>Belt tension check (if belt-driven)</li>
+            <li>Bearing lubrication check</li>
+            <li>Professional calibration if required</li>
+            <li>Update maintenance records</li>
+          </ul>
+        </div>
+        
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🛡️</span>
+            <h3 class="font-semibold text-lg">Signs Requiring Service</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Excessive vibration during operation</li>
+            <li>Unusual noises from motor</li>
+            <li>Intermittent power issues</li>
+            <li>Damaged or frayed power cord</li>
+            <li>Loose or worn pad driver</li>
+            <li>Any electrical burning smell</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="troubleshooting" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+      <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For electrical or motor problems, contact maintenance immediately.</p>
+      
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Machine won't start</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Uneven polishing results</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Excessive vibration</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Poor burnishing quality</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution5">Machine moves erratically</button></li>
+          </ul>
+        </div>
+        
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select an issue from the list to view solutions here.</p>
+          </div>
+          
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3 text-red-600">Solution: Machine Won't Start</h3>
+            <p class="mb-2"><strong>Possible Causes:</strong> No power supply, faulty cord, tripped breaker, or internal electrical fault.</p>
+            <p class="mb-4"><strong>Solutions:</strong></p>
+            <ul class="list-disc list-inside text-sm space-y-1 mb-4">
+              <li>Check outlet with another device to verify power</li>
+              <li>Inspect entire power cord for damage</li>
+              <li>Check facility breaker panel for tripped breakers</li>
+              <li>Ensure switch is in proper position</li>
+            </ul>
+            <p class="text-red-600 font-semibold">⚠️ If problem persists, contact maintenance - do not attempt electrical repairs.</p>
+          </div>
+          
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3 text-red-600">Solution: Uneven Polishing Results</h3>
+            <p class="mb-2"><strong>Possible Causes:</strong> Worn pad, incorrect pad type, uneven pressure, or damaged driver plate.</p>
+            <p class="mb-4"><strong>Solutions:</strong></p>
+            <ul class="list-disc list-inside text-sm space-y-1">
+              <li>Replace worn or damaged burnishing pad</li>
+              <li>Verify correct pad type for floor surface</li><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victor Lynx Burnisher - Interactive Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #EBF8FF;
+      border-left-color: #3B82F6;
+    }
+    .solution-content {
+      display: none;
+    }
+    .training-header {
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+    }
+    .safety-icon {
+      background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+    }
+    .operation-icon {
+      background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+    }
+    .maintenance-icon {
+      background: linear-gradient(135deg, #bbdefb 0%, #64b5f6 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Safety Modal -->
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+    <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge these critical safety protocols for operating the Victor Lynx Burnisher.</p>
+    <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>non-slip shoes</strong> and <strong>hearing protection</strong>.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Inspect the machine for <strong>damage</strong> before use (cord, handle, pad driver).</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure the floor is <strong>free of obstacles</strong> and debris.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Never operate on <strong>wet floors</strong> unless using a wet-burnishing pad.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Keep <strong>hands and feet</strong> away from the rotating pad.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Unplug the machine before <strong>changing pads</strong> or performing maintenance.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">Victor Lynx 17″ High-Speed Burnisher</h1>
+    <p class="text-lg text-gray-500 mt-2">Interactive Training & Best Practices</p>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+    <a data-target="operation" class="nav-link">⚙️ Operation</a>
+    <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <!-- Full Guide Section -->
+  <div id="guide" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Complete Victor Lynx Burnisher Guide</h2>
+      <p class="text-gray-600 mb-6">Follow this step-by-step guide for safe and effective burnishing. Expand each section for details.</p>
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">Pre-Operation Checks</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Machine Inspection:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Check power cord for frays or damage</li>
+                  <li>Ensure pad driver is securely attached</li>
+                  <li>Verify pad is clean and properly installed</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Area Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Remove all debris from the floor</li>
+                  <li>Place "Floor Maintenance" signs</li>
+                  <li>Identify exit path (work backward)</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Operation Procedure</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Starting the Machine:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Plug into grounded outlet</li>
+                  <li>Stand behind machine, grip handle firmly</li>
+                  <li>Turn on at lowest speed setting</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Burnishing Technique:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Move in straight, overlapping passes</li>
+                  <li>Maintain consistent speed (avoid jerking)</li>
+                  <li>Overlap each pass by 50%</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Post-Operation</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>Turn off and unplug the machine</li>
+              <li>Remove and clean the burnishing pad</li>
+              <li>Inspect pad driver for wear</li>
+              <li>Store in dry, secure location</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operation Section -->
+  <div id="operation" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Operation Techniques</h2>
+      <p class="text-gray-600 mb-6">Master these techniques for optimal burnishing results.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 safety-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">⚠️</span>
+            <h3 class="font-semibold text-lg">Safety Protocols</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Always wear hearing protection</li>
+            <li>Never operate on wet floors (unless wet-burnishing)</li>
+            <li>Keep loose clothing/hair away from rotating pad</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 operation-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">⚙️</span>
+            <h3 class="font-semibold text-lg">Burnishing Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Start at lowest speed, increase gradually</li>
+            <li>Use overlapping figure-eight patterns</li>
+            <li>Apply even pressure—let the machine do the work</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 maintenance-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔧</span>
+            <h3 class="font-semibold text-lg">Maintenance Tips</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Clean pad after each use</li>
+            <li>Inspect motor brushes monthly</li>
+            <li>Lubricate wheels as needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Troubleshooting Section -->
+  <div id="troubleshooting" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+      <p class="text-gray-600 mb-6">Select an issue to view solutions. For persistent problems, contact maintenance.</p>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Machine won't start</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Uneven polishing</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Excessive vibration</button></li>
+          </ul>
+        </div>
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select an issue from the list to view solutions here.</p>
+          </div>
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution: Machine Won't Start</h3>
+            <p><strong>Possible Causes:</strong> No power, faulty cord, or tripped breaker.</p>
+            <p><strong>Solutions:</strong> Check outlet, inspect cord for damage, reset breaker, or contact maintenance.</p>
+          </div>
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution: Uneven Polishing</h3>
+            <p><strong>Possible Causes:</strong> Worn pad, incorrect speed, or uneven floor.</p>
+            <p><strong>Solutions:</strong> Replace pad, adjust speed, or make multiple passes.</p>
+          </div>
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution: Excessive Vibration</h3>
+            <p><strong>Possible Causes:</strong> Loose pad, unbalanced driver, or damaged parts.</p>
+            <p><strong>Solutions:</strong> Reattach pad, inspect driver, or contact maintenance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources Section -->
+  <div id="resources" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Resources & Video Library</h2>
+      <p class="text-gray-600 mb-6">Official manuals and training videos for the Victor Lynx Burnisher.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📄 Official Manuals</h3>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Victor Lynx User Manual (PDF)</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">Safety Data Sheets</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Training Videos</h3>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Video: Proper Burnishing Technique</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">Video: Pad Replacement Guide</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Same JavaScript as your original file (for navigation, accordions, etc.)
+  document.addEventListener('DOMContentLoaded', function () {
+    const safetyModal = document.getElementById('safety-modal');
+    const safetyModalContent = document.getElementById('safety-modal-content');
+    const safetyAck = document.getElementById('safety-ack');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+      safetyModalContent.style.opacity = '1';
+      safetyModalContent.style.transform = 'scale(1)';
+    }, 100);
+
+    safetyAck.addEventListener('change', () => {
+      proceedBtn.disabled = !safetyAck.checked;
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      safetyModal.style.transition = 'opacity 0.5s ease';
+      safetyModal.style.opacity = '0';
+      setTimeout(() => {
+        safetyModal.style.display = 'none';
+        mainContent.style.opacity = '1';
+      }, 500);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const target = link.getAttribute('data-target');
+        contentSections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === target) {
+            section.classList.add('active');
+          }
+        });
+      });
+    });
+
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+      const header = item.querySelector('.accordion-header');
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span');
+
+      header.addEventListener('click', () => {
+        const isOpen = content.style.maxHeight;
+
+        accordionItems.forEach(i => {
+          i.querySelector('.accordion-content').style.maxHeight = null;
+          i.querySelector('.accordion-content').style.padding = '0';
+          i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          content.style.maxHeight = (content.scrollHeight + 50) + "px";
+          content.style.padding = '1rem 1.5rem';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    const troubleItems = document.querySelectorAll('.trouble-item');
+    const solutionContents = document.querySelectorAll('.solution-content');
+    const solutionPlaceholder = document.getElementById('solution-placeholder');
+    troubleItems.forEach(item => {
+      item.addEventListener('click', () => {
+        troubleItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        solutionPlaceholder.style.display = 'none';
+
+        const targetSolution = document.getElementById(item.dataset.solution);
+        solutionContents.forEach(s => s.style.display = 'none');
+        if(targetSolution) {
+          targetSolution.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
+              <li>Check pad driver for damage or debris</li>
+              <li>Maintain consistent speed and pressure</li>
+              <li>Increase overlap between passes</li>
+            </ul>
+          </div>
+          
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3 text-red-600">Solution: Excessive Vibration</h3>
+            <p class="mb-2"><strong>Possible Causes:</strong> Loose pad, unbalanced driver, worn bearings, or damaged motor mount.</p>
+            <p class="mb-4"><strong>Solutions:</strong></p>
+            <ul class="list-disc list-inside text-sm space-y-1 mb-4">
+              <li>Check pad attachment - reattach if loose</li>
+              <li>Inspect pad for uneven wear or damage</li>
+              <li>Clean driver plate thoroughly</li>
+              <li>Check all bolts and connections for tightness</li>
+            </ul>
+            <p class="text-red-600 font-semibold">⚠️ If vibration continues, stop use an

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweeping & Static Mopping - Interactive Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #EBF8FF;
+      border-left-color: #3B82F6;
+    }
+    .solution-content {
+      display: none;
+    }
+    .training-header {
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+    }
+    .sweeping-icon {
+      background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+    }
+    .mopping-icon {
+      background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+    }
+    .tool-icon {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+    <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for sweeping and static mopping. Your safety is our top priority.</p>
+    <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>non-slip footwear</strong> during cleaning operations.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>appropriate signage</strong> ("Cleaning in Progress") before starting.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Check the floor for <strong>obstacles or hazards</strong> before sweeping or mopping.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>ergonomic techniques</strong> to prevent back strain when sweeping or mopping.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Never block exits or pathways</strong> with cleaning equipment.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure <strong>proper ventilation</strong> when using cleaning solutions.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Lift properly</strong> when handling heavy equipment.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">Sweeping & Static Mopping</h1>
+    <p class="text-lg text-gray-500 mt-2">Interactive Training & Best Practices</p>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+    <a data-target="techniques" class="nav-link">🧹 Techniques</a>
+    <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <div id="guide" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Complete Sweeping & Static Mopping Guide</h2>
+      <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of proper sweeping and static mopping procedures. Expand each section to see the detailed steps.</p>
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">Preparation & Setup</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Pre-Cleaning Assessment:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Survey the area to identify floor type, debris types, and potential obstacles</li>
+                  <li>Check for loose items that need to be removed before cleaning</li>
+                  <li>Identify any spills or sticky spots that require special attention</li>
+                  <li>Determine the best starting point and cleaning path</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Safety Setup:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Place "Cleaning in Progress" signs at all entrances to the area</li>
+                  <li>Wear appropriate PPE: non-slip shoes and gloves</li>
+                  <li>Ensure proper lighting in the cleaning area</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Equipment Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Select the right broom for the job (corn broom for outdoor, push broom for large areas, soft broom for dust)</li>
+                  <li>For static mopping: prepare cleaning solution as per manufacturer instructions</li>
+                  <li>Have dustpan, mop bucket, and waste bin ready</li>
+                  <li>Check that all equipment is clean and in good condition</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Sweeping Procedure</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Proper Technique:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Start in the farthest corner and work toward the exit</li>
+                  <li>Use overlapping strokes to ensure no area is missed</li>
+                  <li>Apply gentle pressure - let the broom do the work</li>
+                  <li>For dust control: slightly dampen broom bristles for indoor sweeping</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Area Coverage:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Divide large areas into manageable sections</li>
+                  <li>Sweep debris into small piles for easy collection</li>
+                  <li>Pay special attention to corners and edges</li>
+                  <li>Sweep under furniture when possible</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Debris Collection:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Use dustpan effectively - hold at 45° angle to floor</li>
+                  <li>Collect debris into waste bin immediately</li>
+                  <li>For large debris: use shovel or specialized equipment</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Static Mopping Procedure</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Mop Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Fully immerse mop in cleaning solution</li>
+                  <li>Wring out thoroughly - mop should be damp, not wet</li>
+                  <li>Check solution temperature (follow product guidelines)</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Mopping Technique:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Start in the farthest corner and work toward the exit</li>
+                  <li>Use figure-eight or overlapping S-pattern motions</li>
+                  <li>Apply even pressure - let the mop glide across the surface</li>
+                  <li>Flip mop frequently to use clean surfaces</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Special Areas:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Baseboards: Use damp cloth along edges</li>
+                  <li>Corners: Use smaller mop or hand-held tool</li>
+                  <li>High-traffic areas: May require extra attention</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Post-Cleaning</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>Allow floor to dry completely before removing signage</li>
+              <li>Rinse all tools thoroughly with clean water</li>
+              <li>Hang mops and brooms to dry completely</li>
+              <li>Dispose of waste properly</li>
+              <li>Store all equipment in designated area</li>
+              <li>Report any equipment issues to supervisor</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="techniques" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Advanced Techniques</h2>
+      <p class="text-gray-600 mb-6">Master these techniques for optimal cleaning results and efficiency.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 sweeping-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🧹</span>
+            <h3 class="font-semibold text-lg">Sweeping Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Dust Control:</strong> Lightly mist broom before sweeping indoors</li>
+            <li><strong>Efficient Patterns:</strong> Work in overlapping arcs or grids</li>
+            <li><strong>Pressure Control:</strong> Light touch for dust, firm for debris</li>
+            <li><strong>Edge Work:</strong> Use broom edge for corners and tight spaces</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 mopping-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🧽</span>
+            <h3 class="font-semibold text-lg">Static Mopping Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Solution Control:</strong> Optimal wringing technique for dampness</li>
+            <li><strong>Figure-Eight:</strong> Most efficient coverage pattern</li>
+            <li><strong>Pressure:</strong> Let mop head glide - don't scrub</li>
+            <li><strong>Mop Rotation:</strong> Flip mop frequently for clean surface</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 tool-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">⚙️</span>
+            <h3 class="font-semibold text-lg">Tool Selection Guide</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Brooms:</strong> Corn for outdoor, synthetic for indoor, push for large areas</li>
+            <li><strong>Mops:</strong> Microfiber for most surfaces, cotton for absorbency</li>
+            <li><strong>Dustpans:</strong> Rubber-edged for better seal, long-handled for ergonomics</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔍</span>
+            <h3 class="font-semibold text-lg">Special Surface Handling</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>High-traffic areas:</strong> Sweep more frequently, mop with extra solution</li>
+            <li><strong>Textured floors:</strong> Use stiffer broom, more solution for mopping</li>
+            <li><strong>Delicate surfaces:</strong> Soft-bristle broom, minimal solution for mopping</li>
+            <li><strong>Outdoor areas:</strong> Stiff broom, more aggressive mopping solution</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="troubleshooting" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+      <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For persistent problems, consult a supervisor.</p>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Dust cloud when sweeping</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Debris left behind after sweeping</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Streaks after static mopping</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Floor takes too long to dry</button></li>
+          </ul>
+        </div>
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select an issue from the list to view solutions here.</p>
+          </div>
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Dust Cloud When Sweeping</h3>
+            <p><strong>Possible Causes:</strong> Dry broom bristles, sweeping too vigorously, or dusty environment.</p>
+            <p><strong>Solutions:</strong> Lightly dampen broom bristles before sweeping, sweep more slowly with controlled strokes, or use a dust-control sweeping compound.</p>
+          </div>
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Debris Left Behind</h3>
+            <p><strong>Possible Causes:</strong> Wrong broom type, worn bristles, or improper technique.</p>
+            <p><strong>Solutions:</strong> Use a broom with stiffer bristles, replace worn brooms, ensure overlapping strokes, or sweep in multiple directions for stubborn debris.</p>
+          </div>
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Streaks After Static Mopping</h3>
+            <p><strong>Possible Causes:</strong> Too much cleaning solution, dirty mop, or improper wringing.</p>
+            <p><strong>Solutions:</strong> Use less cleaning solution, change mop head more frequently, wring mop more thoroughly, or use distilled water in solution.</p>
+          </div>
+          <div id="solution4" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Slow Drying</h3>
+            <p><strong>Possible Causes:</strong> Over-wet mop, high humidity, or poor ventilation.</p>
+            <p><strong>Solutions:</strong> Wring mop more thoroughly, use flat mop system, improve ventilation, or mop in smaller sections.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 border p-4 rounded-lg bg-gray-50">
+        <h3 class="font-semibold text-lg mb-2">🛠️ Troubleshooting Videos</h3>
+        <p class="text-sm text-gray-600 mb-3">Explore common troubleshooting video guides for sweeping and static mopping.</p>
+        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+          <li><a href="http://youtube.com/sweepingvideo1" target="_blank" class="hover:underline">Video: Dust Control Techniques</a></li>
+          <li><a href="http://youtube.com/moppingvideo1" target="_blank" class="hover:underline">Video: Proper Mop Wringing</a></li>
+          <li><a href="http://youtube.com/staticmopping" target="_blank" class="hover:underline">Video: Streak-Free Static Mopping</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="resources" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+      <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📄 Cleaning Solution Guides</h3>
+          <p class="text-sm text-gray-600 mb-3">Access detailed product specifications and safety data sheets for approved cleaning solutions.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Floor Cleaner Manual (Link)</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">MSDS: Static Mop Solution (Link)</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Basic Sweeping Techniques</h3>
+          <p class="text-sm text-gray-600 mb-3">A step-by-step video guide covering proper sweeping techniques.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/sweepingtutorial1" target="_blank" class="hover:underline">Video: Efficient Sweeping Patterns</a></li>
+            <li><a href="http://youtube.com/sweepingtutorial2" target="_blank" class="hover:underline">Video: Dust Control Methods</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Static Mopping Mastery</h3>
+          <p class="text-sm text-gray-600 mb-3">For experienced staff: learn advanced static mopping methods.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/staticmopping1" target="_blank" class="hover:underline">Video: Figure-Eight Technique</a></li>
+            <li><a href="http://youtube.com/staticmopping2" target="_blank" class="hover:underline">Video: Solution Control & Wringing</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const safetyModal = document.getElementById('safety-modal');
+    const safetyModalContent = document.getElementById('safety-modal-content');
+    const safetyAck = document.getElementById('safety-ack');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+      safetyModalContent.style.opacity = '1';
+      safetyModalContent.style.transform = 'scale(1)';
+    }, 100);
+
+    safetyAck.addEventListener('change', () => {
+      proceedBtn.disabled = !safetyAck.checked;
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      safetyModal.style.transition = 'opacity 0.5s ease';
+      safetyModal.style.opacity = '0';
+      setTimeout(() => {
+        safetyModal.style.display = 'none';
+        mainContent.style.opacity = '1';
+      }, 500);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const target = link.getAttribute('data-target');
+        contentSections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === target) {
+            section.classList.add('active');
+          }
+        });
+      });
+    });
+
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+      const header = item.querySelector('.accordion-header');
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span');
+
+      header.addEventListener('click', () => {
+        const isOpen = content.style.maxHeight;
+
+        accordionItems.forEach(i => {
+          i.querySelector('.accordion-content').style.maxHeight = null;
+          i.querySelector('.accordion-content').style.padding = '0';
+          i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          content.style.maxHeight = (content.scrollHeight + 50) + "px";
+          content.style.padding = '1rem 1.5rem';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    const troubleItems = document.querySelectorAll('.trouble-item');
+    const solutionContents = document.querySelectorAll('.solution-content');
+    const solutionPlaceholder = document.getElementById('solution-placeholder');
+    troubleItems.forEach(item => {
+      item.addEventListener('click', () => {
+        troubleItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        solutionPlaceholder.style.display = 'none';
+
+        const targetSolution = document.getElementById(item.dataset.solution);
+        solutionContents.forEach(s => s.style.display = 'none');
+        if(targetSolution) {
+          targetSolution.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

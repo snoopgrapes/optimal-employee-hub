@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Portal - Dashboard</title>
+</head>
+<body>
+    <h1>Employee Dashboard</h1>
+    <!-- Add dashboard content here -->
+</body>
+</html>

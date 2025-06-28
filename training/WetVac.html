@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WV1800DH Industrial Wet Vacuum - Interactive Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-link.active {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-link:not(.active):hover {
+            background-color: #E5E7EB;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+        }
+        .trouble-item.active {
+            background-color: #EBF8FF;
+            border-left-color: #3B82F6;
+        }
+        .solution-content {
+            display: none;
+        }
+        .vacuum-icon {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+        }
+        .hose-icon {
+            background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+        }
+        .safety-icon {
+            background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+            <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+            <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for operating the WV1800DH Industrial Wet Vacuum. Your safety is our top priority.</p>
+            <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear appropriate <strong>PPE</strong> including safety glasses, gloves, and steel-toe boots.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure the vacuum is <strong>unplugged</strong> before performing any maintenance or hose changes.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Never vacuum <strong>flammable liquids</strong> or hazardous materials unless specifically rated for such use.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use proper <strong>lifting techniques</strong> when handling the vacuum or dump hose to prevent injury.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure <strong>proper ventilation</strong> when vacuuming chemicals or fine dust particles.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Inspect the dump hose and connections for <strong>damage or wear</strong> before each use.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Follow all <strong>weight limits</strong> for the vacuum and dump hose system.</span></div>
+            </div>
+            <div class="mt-8">
+                <label for="safety-ack" class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+                </label>
+            </div>
+            <div class="mt-6 text-right">
+                <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">WetVac</h1>
+            <p class="text-lg text-gray-500 mt-2">Dump Hose Operation & Maintenance Training</p>
+        </header>
+
+        <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+            <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+            <a data-target="operation" class="nav-link">⚙️ Operation</a>
+            <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+            <a data-target="resources" class="nav-link">🔗 Resources</a>
+        </nav>
+
+        <div id="guide" class="content-section active">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Complete WV1800DH Dump Hose Guide</h2>
+                <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of the WV1800DH dump hose system. Expand each section to see detailed instructions.</p>
+                <div class="space-y-4">
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-black">Introduction & Components</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">WV1800DH Overview:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Industrial-grade wet vacuum cleaner with high-capacity dump hose system</li>
+                                        <li>Designed for heavy-duty liquid and debris collection</li>
+                                        <li>Dump hose allows for easy emptying without lifting the vacuum unit</li>
+                                        <li>Capacity: 18 liters (4.75 gallons)</li>
+                                        <li>Hose diameter: 50mm (2 inches)</li>
+                                        <li>Maximum vacuum: 2200mm water gauge</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Key Components:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li><strong>Main vacuum unit</strong> - Contains motor and collection tank</li>
+                                        <li><strong>Dump hose assembly</strong> - Reinforced flexible hose with quick-release couplings</li>
+                                        <li><strong>Dump valve mechanism</strong> - Allows controlled emptying of collected liquids</li>
+                                        <li><strong>Filtration system</strong> - Includes foam and paper filters for different applications</li>
+                                        <li><strong>Accessories</strong> - Various nozzles and adapters for different cleaning tasks</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Setup & Installation</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Initial Setup:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Position the vacuum on a stable, level surface near the work area</li>
+                                        <li>Ensure adequate clearance around the unit for proper ventilation</li>
+                                        <li>Verify power supply matches the unit's requirements (check voltage and amperage)</li>
+                                        <li>Install appropriate filters for your application (foam for liquids, paper for fine dust)</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Dump Hose Installation:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Ensure vacuum is unplugged before installing the hose</li>
+                                        <li>Align the hose connector with the vacuum inlet, matching the arrow indicators</li>
+                                        <li>Push firmly until the locking mechanism clicks into place</li>
+                                        <li>Tug gently on the hose to confirm it's securely attached</li>
+                                        <li>For dump hose operation, connect the outlet end to the dump valve assembly</li>
+                                        <li>Ensure all clamps and seals are properly tightened</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Maintenance & Storage</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                           <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li><strong class="font-semibold text-black">Daily Maintenance:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Empty collection tank after each use</li>
+                                        <li>Rinse tank and dump hose with clean water if used for liquids</li>
+                                        <li>Inspect hose for cracks, abrasions, or weak spots</li>
+                                        <li>Check all connections for tightness and leaks</li>
+                                        <li>Clean or replace filters as needed</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="font-semibold text-black">Weekly Maintenance:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Thoroughly clean dump hose interior with mild detergent</li>
+                                        <li>Inspect dump valve mechanism for proper operation</li>
+                                        <li>Check electrical cord for damage</li>
+                                        <li>Lubricate moving parts as specified in manual</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="font-semibold text-black">Storage:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Store in a clean, dry location</li>
+                                        <li>Coil dump hose loosely to prevent kinking</li>
+                                        <li>Ensure tank is completely dry before storage</li>
+                                        <li>Remove and store filters separately if storing for extended periods</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="operation" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Operation Procedures</h2>
+                <p class="text-gray-600 mb-6">Follow these procedures for safe and effective operation of the WV1800DH dump hose system.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50 vacuum-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">💨</span>
+                            <h3 class="font-semibold text-lg">Standard Vacuum Operation</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Setup:</strong> Ensure proper filter installed for material being collected</li>
+                            <li><strong>Power:</strong> Plug into appropriate grounded outlet</li>
+                            <li><strong>Operation:</strong> Move nozzle slowly across surface for optimal pickup</li>
+                            <li><strong>Monitoring:</strong> Regularly check tank level to prevent overfilling</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50 hose-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🚰</span>
+                            <h3 class="font-semibold text-lg">Dump Hose Procedures</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Preparation:</strong> Position vacuum near drainage area</li>
+                            <li><strong>Connection:</strong> Securely attach dump hose to outlet valve</li>
+                            <li><strong>Emptying:</strong> Open dump valve slowly to control flow</li>
+                            <li><strong>Completion:</strong> Rinse hose and tank after emptying liquids</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50 safety-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🛡️</span>
+                            <h3 class="font-semibold text-lg">Safety Protocols</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Electrical:</strong> Never operate with damaged cord or in wet conditions</li>
+                            <li><strong>Chemical:</strong> Verify compatibility before vacuuming chemicals</li>
+                            <li><strong>Weight:</strong> Do not exceed maximum capacity (18L)</li>
+                            <li><strong>Maintenance:</strong> Always unplug before servicing</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🔌</span>
+                            <h3 class="font-semibold text-lg">Special Applications</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Fine Dust:</strong> Use paper filter and empty frequently</li>
+                            <li><strong>Large Debris:</strong> Use wide nozzle and monitor hose for clogs</li>
+                            <li><strong>Corrosives:</strong> Only with chemical-resistant accessories</li>
+                            <li><strong>High-Temp:</strong> Allow materials to cool before vacuuming</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="troubleshooting" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+                <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For persistent problems, consult a supervisor.</p>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3">
+                        <ul class="space-y-2">
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Loss of suction power</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Dump hose leaks</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Vacuum won't turn on</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Dump valve stuck</button></li>
+                        </ul>
+                    </div>
+                    <div class="md:w-2/3">
+                        <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+                            <p>Select an issue from the list to view solutions here.</p>
+                        </div>
+                        <div id="solution1" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Loss of Suction Power</h3>
+                            <p><strong>Possible Causes:</strong> Clogged filter, full collection tank, hose blockage, or damaged seals.</p>
+                            <p><strong>Solutions:</strong> Clean/replace filter, empty tank, check for hose obstructions, inspect seals for damage, ensure all connections are tight.</p>
+                        </div>
+                        <div id="solution2" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Dump Hose Leaks</h3>
+                            <p><strong>Possible Causes:</strong> Loose connections, damaged hose, worn seals, or cracked fittings.</p>
+                            <p><strong>Solutions:</strong> Tighten all connections, inspect hose for damage, replace worn seals, check fittings for cracks, ensure proper hose installation.</p>
+                        </div>
+                        <div id="solution3" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Vacuum Won't Turn On</h3>
+                            <p><strong>Possible Causes:</strong> Power supply issue, tripped thermal cut-out, faulty switch, or motor problem.</p>
+                            <p><strong>Solutions:</strong> Check power cord and outlet, reset thermal cut-out (allow to cool first), inspect power switch, contact service if motor issue suspected.</p>
+                        </div>
+                        <div id="solution4" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Dump Valve Stuck</h3>
+                            <p><strong>Possible Causes:</strong> Debris in valve mechanism, dried residue, or mechanical failure.</p>
+                            <p><strong>Solutions:</strong> Clean valve thoroughly, lubricate moving parts with approved lubricant, operate valve several times to free mechanism, replace if damaged.</p>
+                        </div>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">🛠️ Troubleshooting Videos</h3>
+                        <p class="text-sm text-gray-600 mb-3">Explore common troubleshooting video guides for the WV1800DH vacuum.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/vacuumvideo1" target="_blank" class="hover:underline">Video: Dump Hose Installation & Maintenance</a></li>
+                            <li><a href="http://youtube.com/vacuumvideo2" target="_blank" class="hover:underline">Video: Solving Suction Problems</a></li>
+                            <li><a href="http://youtube.com/vacuumvideo3" target="_blank" class="hover:underline">Video: Valve Maintenance</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resources" class="content-section">
+             <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+                <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">📄 Manufacturer's Guides & MSDS</h3>
+                        <p class="text-sm text-gray-600 mb-3">Access detailed product specifications and safety data sheets.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="#" target="_blank" class="hover:underline">WV1800DH Operation Manual (Link)</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">Dump Hose Technical Specifications (Link)</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">MSDS: Approved Cleaning Solutions (Link)</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Basic Operation</h3>
+                        <p class="text-sm text-gray-600 mb-3">A step-by-step video guide covering basic vacuum operation.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/vacuumtutorial1" target="_blank" class="hover:underline">Video: Setup & First Use</a></li>
+                            <li><a href="http://youtube.com/vacuumtutorial2" target="_blank" class="hover:underline">Video: Dump Hose Operation</a></li>
+                            <li><a href="http://youtube.com/vacuumtutorial3" target="_blank" class="hover:underline">Video: Filter Maintenance</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Advanced Techniques</h3>
+                        <p class="text-sm text-gray-600 mb-3">For experienced operators: learn advanced vacuum techniques.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/vacuumadvanced1" target="_blank" class="hover:underline">Video: Large Spill Cleanup</a></li>
+                            <li><a href="http://youtube.com/vacuumadvanced2" target="_blank" class="hover:underline">Video: Chemical Handling</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">📊 Infographic: Maintenance Schedule</h3>
+                        <p class="text-sm text-gray-600 mb-3">Quick reference guide for proper maintenance intervals.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="#" target="_blank" class="hover:underline">Download Maintenance Checklist (PDF)</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">Parts Replacement Guide (PDF)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const safetyModal = document.getElementById('safety-modal');
+            const safetyModalContent = document.getElementById('safety-modal-content');
+            const safetyAck = document.getElementById('safety-ack');
+            const proceedBtn = document.getElementById('proceed-btn');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(() => {
+                safetyModalContent.style.opacity = '1';
+                safetyModalContent.style.transform = 'scale(1)';
+            }, 100);
+
+            safetyAck.addEventListener('change', () => {
+                proceedBtn.disabled = !safetyAck.checked;
+            });
+
+            proceedBtn.addEventListener('click', () => {
+                safetyModal.style.transition = 'opacity 0.5s ease';
+                safetyModal.style.opacity = '0';
+                setTimeout(() => {
+                    safetyModal.style.display = 'none';
+                    mainContent.style.opacity = '1';
+                }, 500);
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    const target = link.getAttribute('data-target');
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = header.querySelector('span');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight;
+
+                    accordionItems.forEach(i => {
+                        i.querySelector('.accordion-content').style.maxHeight = null;
+                        i.querySelector('.accordion-content').style.padding = '0';
+                        i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isOpen) {
+                        content.style.maxHeight = (content.scrollHeight + 50) + "px";
+                        content.style.padding = '1rem 1.5rem';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const troubleItems = document.querySelectorAll('.trouble-item');
+            const solutionContents = document.querySelectorAll('.solution-content');
+            const solutionPlaceholder = document.getElementById('solution-placeholder');
+            troubleItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    troubleItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    solutionPlaceholder.style.display = 'none';
+
+                    const targetSolution = document.getElementById(item.dataset.solution);
+                    solutionContents.forEach(s => s.style.display = 'none');
+                    if(targetSolution) {
+                       targetSolution.style.display = 'block';
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

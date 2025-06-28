@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Use of MEWPs - Interactive Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-link.active {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .nav-link:not(.active):hover {
+            background-color: #E5E7EB;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+        }
+        .trouble-item.active {
+            background-color: #EBF8FF;
+            border-left-color: #3B82F6;
+        }
+        .solution-content {
+            display: none;
+        }
+        .mewp-icon {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+        }
+        .inspection-icon {
+            background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+        }
+        .safety-icon {
+            background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+        }
+        .zone-icon {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+            <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> MEWP Safety First!</h2>
+            <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for working with and around Mobile Elevated Work Platforms. Your safety is our top priority.</p>
+            <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>appropriate fall protection</strong> when in the platform.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Inspect equipment <strong>before each use</strong> using the manufacturer's checklist.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Never exceed the <strong>maximum load rating</strong> (including tools, materials, and personnel).</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Conduct a <strong>site assessment</strong> for overhead hazards, ground conditions, and slopes.</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Maintain <strong>safe distances</strong> from power lines (minimum 10 feet for <50kV).</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Never override safety devices or use MEWPs in <strong>high winds</strong> (>28 mph/12.5 m/s).</span></div>
+                <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Establish <strong>exclusion zones</strong> around operating MEWPs to protect ground personnel.</span></div>
+            </div>
+            <div class="mt-8">
+                <label for="safety-ack" class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+                </label>
+            </div>
+            <div class="mt-6 text-right">
+                <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">MEWP Safety Training</h1>
+            <p class="text-lg text-gray-500 mt-2">Safe Operation & Working Near Mobile Elevated Work Platforms</p>
+        </header>
+
+        <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+            <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+            <a data-target="operation" class="nav-link">⚙️ Operation</a>
+            <a data-target="troubleshooting" class="nav-link">🔧 Inspection</a>
+            <a data-target="zones" class="nav-link">🚧 Work Zones</a>
+            <a data-target="resources" class="nav-link">🔗 Resources</a>
+        </nav>
+
+        <div id="guide" class="content-section active">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Complete MEWP Safety Guide</h2>
+                <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of MEWP safety. Expand each section to see detailed instructions.</p>
+                <div class="space-y-4">
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-black">Introduction & MEWP Types</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">MEWP Types:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li><strong>Boom lifts:</strong> Articulating or telescopic booms with platform (e.g., cherry pickers)</li>
+                                        <li><strong>Scissor lifts:</strong> Vertical-only movement with large platform</li>
+                                        <li><strong>Vertical personnel platforms:</strong> Compact lifts for vertical access</li>
+                                        <li><strong>Trailer-mounted lifts:</strong> Portable units towed to location</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Key Components:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li><strong>Platform/basket:</strong> Working area with guardrails and gate</li>
+                                        <li><strong>Boom/arms:</strong> Extendable sections for reach</li>
+                                        <li><strong>Base/chassis:</strong> Contains engine, controls, and stabilizers</li>
+                                        <li><strong>Controls:</strong> Ground and platform controls with emergency stop</li>
+                                        <li><strong>Stabilizers/outriggers:</strong> For stability when extended</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Classifications:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li><strong>Group A:</strong> Vertical-only movement (e.g., scissor lifts)</li>
+                                        <li><strong>Group B:</strong> Moving boom with platform (e.g., boom lifts)</li>
+                                        <li><strong>Type 1:</strong> Driven only in stowed position</li>
+                                        <li><strong>Type 2:</strong> Can be driven elevated on firm surfaces</li>
+                                        <li><strong>Type 3:</strong> Can be driven elevated on rough terrain</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Setup & Operation</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Pre-Operation Checks:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Complete pre-start inspection checklist</li>
+                                        <li>Check fluid levels, tires, and structural components</li>
+                                        <li>Test all controls and safety devices</li>
+                                        <li>Verify emergency stop functions properly</li>
+                                        <li>Ensure all warning labels and capacity charts are legible</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Site Assessment:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Identify overhead obstructions and power lines</li>
+                                        <li>Check ground conditions for stability and slope limits</li>
+                                        <li>Ensure adequate space for deployment and movement</li>
+                                        <li>Mark underground hazards (e.g., utility covers)</li>
+                                        <li>Establish exclusion zones around work area</li>
+                                    </ul>
+                                </li>
+                                <li class="text-black">
+                                    <strong class="font-semibold text-black">Stabilization:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Deploy outriggers/stabilizers on firm, level surface</li>
+                                        <li>Use appropriate pads or mats on soft surfaces</li>
+                                        <li>Verify automatic leveling system is functioning</li>
+                                        <li>Never bypass interlocks or warning systems</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="accordion-item border border-gray-200 rounded-lg">
+                        <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Maintenance & Storage</h3>
+                            <span class="transform transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                           <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+                                <li><strong class="font-semibold text-black">Daily Maintenance:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Clean platform of debris and slippery substances</li>
+                                        <li>Check hydraulic systems for leaks</li>
+                                        <li>Inspect safety harness attachment points</li>
+                                        <li>Test all controls and emergency functions</li>
+                                        <li>Verify guardrails and gates function properly</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="font-semibold text-black">Scheduled Maintenance:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Follow manufacturer's maintenance schedule</li>
+                                        <li>Lubricate moving parts as specified</li>
+                                        <li>Inspect structural components for cracks or damage</li>
+                                        <li>Check hydraulic hoses and fittings for wear</li>
+                                        <li>Verify all warning systems are operational</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="font-semibold text-black">Storage:</strong>
+                                    <ul class="list-disc list-outside pl-6 space-y-1">
+                                        <li>Store in clean, dry location protected from weather</li>
+                                        <li>Lower platform fully and retract boom</li>
+                                        <li>Disconnect battery if storing for extended periods</li>
+                                        <li>Secure against unauthorized use</li>
+                                        <li>Keep maintenance records up to date</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="operation" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Safe Operation Procedures</h2>
+                <p class="text-gray-600 mb-6">Follow these procedures for safe use of MEWPs.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50 mewp-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🔼</span>
+                            <h3 class="font-semibold text-lg">Basic Operation</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Pre-use:</strong> Complete inspection checklist and wear harness</li>
+                            <li><strong>Entry/exit:</strong> Maintain 3-point contact when entering/exiting</li>
+                            <li><strong>Controls:</strong> Test ground and platform controls before use</li>
+                            <li><strong>Movement:</strong> Look in direction of travel and sound horn</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">⚠️</span>
+                            <h3 class="font-semibold text-lg">Hazard Awareness</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Overhead:</strong> Maintain 10+ ft clearance from power lines</li>
+                            <li><strong>Ground:</strong> Watch for slopes, holes, and unstable surfaces</li>
+                            <li><strong>Weather:</strong> Don't operate in high winds (>28 mph/12.5 m/s)</li>
+                            <li><strong>Traffic:</strong> Use spotters when moving near pedestrians/vehicles</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50 safety-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🛡️</span>
+                            <h3 class="font-semibold text-lg">Platform Safety</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Capacity:</strong> Never exceed maximum platform load rating</li>
+                            <li><strong>Positioning:</strong> Keep feet on platform floor at all times</li>
+                            <li><strong>Fall protection:</strong> Wear harness with lanyard attached to anchor</li>
+                            <li><strong>Materials:</strong> Secure tools and materials to prevent dropping</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50 inspection-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🔍</span>
+                            <h3 class="font-semibold text-lg">Emergency Procedures</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Malfunction:</strong> Use emergency lowering procedure if stuck</li>
+                            <li><strong>Tip-over:</strong> Stay in platform - don't jump (survival space)</li>
+                            <li><strong>Power lines:</strong> If contact occurs, stay in platform and call for help</li>
+                            <li><strong>Rescue:</strong> Have emergency descent/rescue plan in place</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="troubleshooting" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Inspection & Problem Solving</h2>
+                <p class="text-gray-600 mb-6">Select an issue to see inspection criteria and solutions. Tag and remove damaged equipment from service.</p>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3">
+                        <ul class="space-y-2">
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Structural issues</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Hydraulic problems</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Control malfunctions</button></li>
+                           <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Safety system faults</button></li>
+                        </ul>
+                    </div>
+                    <div class="md:w-2/3">
+                        <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+                            <p>Select an inspection item from the list to view details here.</p>
+                        </div>
+                        <div id="solution1" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Structural Issues</h3>
+                            <p><strong>Inspection Criteria:</strong> Check for bent or cracked boom sections, damaged platform components, worn pivot points, or excessive corrosion (>10% material thickness).</p>
+                            <p><strong>Solutions:</strong> Remove from service immediately. Tag as damaged. Structural repairs must be performed by manufacturer or certified technician. Most structural damage requires replacement of components.</p>
+                        </div>
+                        <div id="solution2" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Hydraulic Problems</h3>
+                            <p><strong>Inspection Criteria:</strong> Check for leaks at fittings, cylinders, and hoses. Listen for unusual pump noises. Check fluid levels and condition. Test for slow operation or drift.</p>
+                            <p><strong>Solutions:</strong> Tighten fittings if leaking. Replace damaged hoses. Change contaminated fluid. Bleed air from system. Major hydraulic repairs require qualified technician.</p>
+                        </div>
+                        <div id="solution3" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Control Malfunctions</h3>
+                            <p><strong>Inspection Criteria:</strong> Test all platform and ground controls. Check for sticking, delayed response, or uncommanded movement. Verify emergency stop functions.</p>
+                            <p><strong>Solutions:</strong> Clean and lubricate control linkages. Check electrical connections. Replace damaged control switches. Never bypass safety interlocks.</p>
+                        </div>
+                        <div id="solution4" class="solution-content">
+                            <h3 class="text-xl font-semibold mb-3">Solution for: Safety System Faults</h3>
+                            <p><strong>Inspection Criteria:</strong> Test overload sensors, tilt alarms, limit switches, and guardrail interlocks. Verify audible alarms and warning lights function.</p>
+                            <p><strong>Solutions:</strong> Reset tripped sensors. Replace faulty switches. Repair damaged wiring. Safety systems must be fully operational before use - never bypass.</p>
+                        </div>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">🛠️ Inspection Videos</h3>
+                        <p class="text-sm text-gray-600 mb-3">Explore MEWP inspection video guides.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/mewpvideo1" target="_blank" class="hover:underline">Video: Daily MEWP Inspection</a></li>
+                            <li><a href="http://youtube.com/mewpvideo2" target="_blank" class="hover:underline">Video: Boom Lift Maintenance</a></li>
+                            <li><a href="http://youtube.com/mewpvideo3" target="_blank" class="hover:underline">Video: Hydraulic System Checks</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="zones" class="content-section">
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Safe Work Zones Around MEWPs</h2>
+                <p class="text-gray-600 mb-6">Critical information for working safely near operating MEWPs.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50 zone-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">🚧</span>
+                            <h3 class="font-semibold text-lg">Exclusion Zones</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Definition:</strong> Area around MEWP where only essential personnel are allowed</li>
+                            <li><strong>Size:</strong> Minimum 10 feet in all directions from platform (larger for high work)</li>
+                            <li><strong>Marking:</strong> Use cones, tape, or barriers with clear signage</li>
+                            <li><strong>Access:</strong> Only trained personnel assisting with the lift operation</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">👷</span>
+                            <h3 class="font-semibold text-lg">Ground Crew Safety</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Positioning:</strong> Stay outside exclusion zones unless assisting</li>
+                            <li><strong>Awareness:</strong> Watch for moving equipment and overhead hazards</li>
+                            <li><strong>Communication:</strong> Maintain visual/radio contact with operator</li>
+                            <li><strong>Materials:</strong> Use tag lines to guide loads - never reach into danger zone</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50 safety-icon">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">⚠️</span>
+                            <h3 class="font-semibold text-lg">Overhead Hazards</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Power lines:</strong> Maintain minimum 10 ft clearance (more for >50kV)</li>
+                            <li><strong>Structures:</strong> Watch for roof edges, beams, and other obstructions</li>
+                            <li><strong>Weather:</strong> Cease operations if lightning or high winds approach</li>
+                            <li><strong>Falling objects:</strong> Wear hard hats in vicinity of working MEWPs</li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3">📋</span>
+                            <h3 class="font-semibold text-lg">Site Coordination</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Planning:</strong> Include MEWP operations in site safety plans</li>
+                            <li><strong>Spotters:</strong> Use trained spotters when moving near hazards</li>
+                            <li><strong>Traffic:</strong> Establish pedestrian routes away from work zones</li>
+                            <li><strong>Signage:</strong> Post warning signs about overhead work</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-2 text-blue-800">📌 Key Reminder:</h3>
+                    <p class="text-blue-700">Most MEWP accidents involve workers on the ground being struck by the equipment or falling objects. Always maintain awareness of MEWP operations in your work area and respect exclusion zones.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="resources" class="content-section">
+             <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+                <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">📄 Safety Standards & Guides</h3>
+                        <p class="text-sm text-gray-600 mb-3">Access detailed safety standards and operation manuals.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="#" target="_blank" class="hover:underline">OSHA MEWP Standards (29 CFR 1926.453)</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">ANSI A92 MEWP Standards</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">Manufacturer Operation Manuals</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Safe Operation</h3>
+                        <p class="text-sm text-gray-600 mb-3">Step-by-step video guides covering proper use.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/mewptutorial1" target="_blank" class="hover:underline">Video: Boom Lift Operation</a></li>
+                            <li><a href="http://youtube.com/mewptutorial2" target="_blank" class="hover:underline">Video: Scissor Lift Safety</a></li>
+                            <li><a href="http://youtube.com/mewptutorial3" target="_blank" class="hover:underline">Video: Working Safely at Height</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">▶️ Video: Work Zone Safety</h3>
+                        <p class="text-sm text-gray-600 mb-3">Learn proper setup of exclusion zones and ground safety.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="http://youtube.com/mewpzone1" target="_blank" class="hover:underline">Video: Establishing Exclusion Zones</a></li>
+                            <li><a href="http://youtube.com/mewpzone2" target="_blank" class="hover:underline">Video: Ground Crew Safety</a></li>
+                        </ul>
+                    </div>
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <h3 class="font-semibold text-lg mb-2">📊 Infographic: Safety Checklist</h3>
+                        <p class="text-sm text-gray-600 mb-3">Quick reference guides for safe practices.</p>
+                        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+                            <li><a href="#" target="_blank" class="hover:underline">Download MEWP Safety Checklist (PDF)</a></li>
+                            <li><a href="#" target="_blank" class="hover:underline">Work Zone Planning Guide (PDF)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const safetyModal = document.getElementById('safety-modal');
+            const safetyModalContent = document.getElementById('safety-modal-content');
+            const safetyAck = document.getElementById('safety-ack');
+            const proceedBtn = document.getElementById('proceed-btn');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(() => {
+                safetyModalContent.style.opacity = '1';
+                safetyModalContent.style.transform = 'scale(1)';
+            }, 100);
+
+            safetyAck.addEventListener('change', () => {
+                proceedBtn.disabled = !safetyAck.checked;
+            });
+
+            proceedBtn.addEventListener('click', () => {
+                safetyModal.style.transition = 'opacity 0.5s ease';
+                safetyModal.style.opacity = '0';
+                setTimeout(() => {
+                    safetyModal.style.display = 'none';
+                    mainContent.style.opacity = '1';
+                }, 500);
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    const target = link.getAttribute('data-target');
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                const content = item.querySelector('.accordion-content');
+                const icon = header.querySelector('span');
+
+                header.addEventListener('click', () => {
+                    const isOpen = content.style.maxHeight;
+
+                    accordionItems.forEach(i => {
+                        i.querySelector('.accordion-content').style.maxHeight = null;
+                        i.querySelector('.accordion-content').style.padding = '0';
+                        i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+                    });
+
+                    if (!isOpen) {
+                        content.style.maxHeight = (content.scrollHeight + 50) + "px";
+                        content.style.padding = '1rem 1.5rem';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const troubleItems = document.querySelectorAll('.trouble-item');
+            const solutionContents = document.querySelectorAll('.solution-content');
+            const solutionPlaceholder = document.getElementById('solution-placeholder');
+            troubleItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    troubleItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    solutionPlaceholder.style.display = 'none';
+
+                    const targetSolution = document.getElementById(item.dataset.solution);
+                    solutionContents.forEach(s => s.style.display = 'none');
+                    if(targetSolution) {
+                       targetSolution.style.display = 'block';
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

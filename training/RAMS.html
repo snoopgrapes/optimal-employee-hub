@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAMS Training - Responsibilities & Best Practices</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #EBF8FF;
+      border-left-color: #3B82F6;
+    }
+    .solution-content {
+      display: none;
+    }
+    .training-header {
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+    }
+    .employer-icon {
+      background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+    }
+    .employee-icon {
+      background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+    }
+    .legal-icon {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Legal Notice</h2>
+    <p class="mb-6 text-gray-600">Before proceeding with this RAMS training, you must acknowledge the following important legal information about workplace health and safety responsibilities.</p>
+    <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>RAMS are <strong>legal requirements</strong> under the Health and Safety at Work Act 1974 (UK) and similar legislation worldwide.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Failure to properly implement RAMS can result in <strong>legal penalties</strong>, including fines and prosecution.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>All employees must <strong>read and understand</strong> the RAMS relevant to their work activities.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>RAMS must be <strong>reviewed regularly</strong> and whenever work practices change.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>You have a <strong>legal duty</strong> to report any hazards not covered by existing RAMS.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-3 text-gray-700">I understand these legal responsibilities regarding RAMS.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">RAMS Training</h1>
+    <p class="text-lg text-gray-500 mt-2">Risk Assessments & Method Statements - Responsibilities & Best Practices</p>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="overview" class="nav-link active">📖 RAMS Overview</a>
+    <a data-target="responsibilities" class="nav-link">👥 Responsibilities</a>
+    <a data-target="creation" class="nav-link">✍️ Creating RAMS</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <div id="overview" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Understanding RAMS</h2>
+      <p class="text-gray-600 mb-6">RAMS stands for Risk Assessment and Method Statements. These are essential health and safety documents that identify hazards and outline safe working procedures.</p>
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">What is a Risk Assessment?</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Definition:</strong> A systematic process of identifying hazards and evaluating risks in the workplace.
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Key Components:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Identifying potential hazards</li>
+                  <li>Determining who might be harmed and how</li>
+                  <li>Evaluating risks and existing control measures</li>
+                  <li>Recording findings and implementing controls</li>
+                  <li>Reviewing and updating as needed</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Legal Requirement:</strong> Required under the Management of Health and Safety at Work Regulations 1999.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">What is a Method Statement?</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Definition:</strong> A document that explains how a particular task or activity will be carried out safely.
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Key Components:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Sequence of work operations</li>
+                  <li>Specific hazards and control measures</li>
+                  <li>Emergency procedures</li>
+                  <li>PPE requirements</li>
+                  <li>Training and competency requirements</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Purpose:</strong> Provides clear instructions to workers and demonstrates safe systems of work to clients.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">When Are RAMS Required?</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>For all work activities that pose significant risk</li>
+              <li>When required by clients or principal contractors</li>
+              <li>For complex or non-routine tasks</li>
+              <li>When working in high-risk environments (construction, manufacturing, etc.)</li>
+              <li>When new processes, equipment or materials are introduced</li>
+              <li>After accidents or near-misses to prevent recurrence</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="responsibilities" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Employer & Employee Responsibilities</h2>
+      <p class="text-gray-600 mb-6">Clear understanding of responsibilities ensures compliance with health and safety legislation.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 employer-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🏢</span>
+            <h3 class="font-semibold text-lg">Employer Responsibilities</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Legal Duty:</strong> Prepare suitable and sufficient risk assessments</li>
+            <li><strong>Implementation:</strong> Ensure safe systems of work are followed</li>
+            <li><strong>Training:</strong> Provide RAMS training to all employees</li>
+            <li><strong>Resources:</strong> Supply necessary PPE and safety equipment</li>
+            <li><strong>Review:</strong> Regularly review and update RAMS</li>
+            <li><strong>Consultation:</strong> Consult with employees on health and safety matters</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 employee-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">👷</span>
+            <h3 class="font-semibold text-lg">Employee Responsibilities</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Compliance:</strong> Follow the safe working methods in RAMS</li>
+            <li><strong>PPE:</strong> Use provided PPE correctly</li>
+            <li><strong>Reporting:</strong> Report hazards and near misses</li>
+            <li><strong>Training:</strong> Participate in required health and safety training</li>
+            <li><strong>Cooperation:</strong> Cooperate with employer on safety matters</li>
+            <li><strong>Accountability:</strong> Take reasonable care of own and others' safety</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 legal-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">⚖️</span>
+            <h3 class="font-semibold text-lg">Legal Framework</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Health and Safety at Work Act 1974</strong> - General duties</li>
+            <li><strong>Management of HSW Regulations 1999</strong> - Risk assessment requirement</li>
+            <li><strong>Construction (Design and Management) Regulations 2015</strong></li>
+            <li><strong>Work at Height Regulations 2005</strong></li>
+            <li><strong>Control of Substances Hazardous to Health (COSHH) 2002</strong></li>
+            <li><strong>Provision and Use of Work Equipment Regulations (PUWER) 1998</strong></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔍</span>
+            <h3 class="font-semibold text-lg">Monitoring & Enforcement</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Inspections:</strong> Regular workplace inspections</li>
+            <li><strong>Audits:</strong> Periodic safety audits</li>
+            <li><strong>HSE:</strong> Health and Safety Executive inspections</li>
+            <li><strong>Penalties:</strong> Fines up to £20,000 or unlimited for serious cases</li>
+            <li><strong>Prosecution:</strong> Possible imprisonment for gross negligence</li>
+            <li><strong>Civil Claims:</strong> Employees may claim for injuries</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="creation" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Creating Effective RAMS</h2>
+      <p class="text-gray-600 mb-6">Follow these steps to develop comprehensive and compliant RAMS documents.</p>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Step 1: Identify Hazards</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Step 2: Assess Risks</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Step 3: Control Measures</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Step 4: Record Findings</button></li>
+          </ul>
+        </div>
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select a step from the list to view detailed instructions.</p>
+          </div>
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Step 1: Identify Hazards</h3>
+            <p><strong>Methods:</strong> Workplace inspections, task analysis, accident records, manufacturer information, consultation with employees.</p>
+            <p><strong>Common Hazards:</strong> Slips/trips, manual handling, work at height, hazardous substances, machinery, electricity, noise, vibration, stress.</p>
+            <p><strong>Consider:</strong> Who might be harmed? How might harm occur? Existing controls? Non-routine operations? Long-term health effects?</p>
+          </div>
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Step 2: Assess Risks</h3>
+            <p><strong>Risk = Likelihood × Severity</strong></p>
+            <p><strong>Rating Systems:</strong> Use a 3×3 or 5×5 matrix to evaluate risk levels (Low/Medium/High).</p>
+            <p><strong>Factors:</strong> Frequency of exposure, number of people at risk, competence of workers, failure history of equipment.</p>
+            <p><strong>Prioritization:</strong> Address highest risks first - those with severe potential consequences and likely to occur.</p>
+          </div>
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Step 3: Control Measures</h3>
+            <p><strong>Hierarchy of Controls:</strong></p>
+            <ol class="list-decimal list-inside space-y-1">
+              <li><strong>Elimination:</strong> Remove the hazard completely</li>
+              <li><strong>Substitution:</strong> Replace with less hazardous option</li>
+              <li><strong>Engineering:</strong> Isolate people from hazard</li>
+              <li><strong>Administrative:</strong> Change work practices</li>
+              <li><strong>PPE:</strong> Personal protective equipment</li>
+            </ol>
+            <p class="mt-2"><strong>Document:</strong> Specify exactly how each hazard will be controlled in the method statement.</p>
+          </div>
+          <div id="solution4" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Step 4: Record Findings</h3>
+            <p><strong>Risk Assessment Format:</strong> Typically includes hazard description, who's at risk, existing controls, risk rating, additional controls required.</p>
+            <p><strong>Method Statement Format:</strong> Scope of work, sequence of operations, PPE requirements, emergency procedures, training requirements.</p>
+            <p><strong>Review Schedule:</strong> Set date for review (at least annually, or when work changes).</p>
+            <p><strong>Distribution:</strong> Ensure all affected workers receive copies and understand content.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 border p-4 rounded-lg bg-gray-50">
+        <h3 class="font-semibold text-lg mb-2">🛠️ RAMS Templates & Examples</h3>
+        <p class="text-sm text-gray-600 mb-3">Download these resources to help create your own RAMS documents.</p>
+        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+          <li><a href="#" target="_blank" class="hover:underline">General Risk Assessment Template (DOC)</a></li>
+          <li><a href="#" target="_blank" class="hover:underline">Construction Method Statement Example (PDF)</a></li>
+          <li><a href="#" target="_blank" class="hover:underline">Office Risk Assessment Example (PDF)</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="resources" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Official Resources & Guidance</h2>
+      <p class="text-gray-600 mb-6">Use these links for further information from regulatory bodies and industry experts.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📄 HSE Guidance Documents</h3>
+          <p class="text-sm text-gray-600 mb-3">Official guidance from the Health and Safety Executive (UK).</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="https://www.hse.gov.uk/risk/risk-assessment.htm" target="_blank" class="hover:underline">HSE: Risk Assessment Guidance</a></li>
+            <li><a href="https://www.hse.gov.uk/construction/areyou/rams.htm" target="_blank" class="hover:underline">HSE: RAMS in Construction</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Risk Assessment Process</h3>
+          <p class="text-sm text-gray-600 mb-3">Step-by-step video guides to creating effective risk assessments.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="https://youtu.be/example1" target="_blank" class="hover:underline">Video: Five Steps to Risk Assessment</a></li>
+            <li><a href="https://youtu.be/example2" target="_blank" class="hover:underline">Video: Practical Risk Assessment Demo</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Method Statements</h3>
+          <p class="text-sm text-gray-600 mb-3">How to create clear, effective method statements.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="https://youtu.be/example3" target="_blank" class="hover:underline">Video: Writing Method Statements</a></li>
+            <li><a href="https://youtu.be/example4" target="_blank" class="hover:underline">Video: Site Implementation of RAMS</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📊 Infographics & Posters</h3>
+          <p class="text-sm text-gray-600 mb-3">Visual reminders of key RAMS principles.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Hierarchy of Controls Poster (PDF)</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">Risk Assessment Process Infographic (PDF)</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const safetyModal = document.getElementById('safety-modal');
+    const safetyModalContent = document.getElementById('safety-modal-content');
+    const safetyAck = document.getElementById('safety-ack');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+      safetyModalContent.style.opacity = '1';
+      safetyModalContent.style.transform = 'scale(1)';
+    }, 100);
+
+    safetyAck.addEventListener('change', () => {
+      proceedBtn.disabled = !safetyAck.checked;
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      safetyModal.style.transition = 'opacity 0.5s ease';
+      safetyModal.style.opacity = '0';
+      setTimeout(() => {
+        safetyModal.style.display = 'none';
+        mainContent.style.opacity = '1';
+      }, 500);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const target = link.getAttribute('data-target');
+        contentSections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === target) {
+            section.classList.add('active');
+          }
+        });
+      });
+    });
+
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+      const header = item.querySelector('.accordion-header');
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span');
+
+      header.addEventListener('click', () => {
+        const isOpen = content.style.maxHeight;
+
+        accordionItems.forEach(i => {
+          i.querySelector('.accordion-content').style.maxHeight = null;
+          i.querySelector('.accordion-content').style.padding = '0';
+          i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          content.style.maxHeight = (content.scrollHeight + 50) + "px";
+          content.style.padding = '1rem 1.5rem';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    const troubleItems = document.querySelectorAll('.trouble-item');
+    const solutionContents = document.querySelectorAll('.solution-content');
+    const solutionPlaceholder = document.getElementById('solution-placeholder');
+    troubleItems.forEach(item => {
+      item.addEventListener('click', () => {
+        troubleItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        solutionPlaceholder.style.display = 'none';
+
+        const targetSolution = document.getElementById(item.dataset.solution);
+        solutionContents.forEach(s => s.style.display = 'none');
+        if(targetSolution) {
+          targetSolution.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

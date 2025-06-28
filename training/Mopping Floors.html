@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mopping Floors - Interactive Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #EBF8FF;
+      border-left-color: #3B82F6;
+    }
+    .solution-content {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+    <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for mopping floors. Your safety is our top priority.</p>
+    <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>non-slip footwear</strong> when mopping.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>appropriate signage</strong> ("Wet Floor") before starting.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Never mix cleaning chemicals</strong> unless specifically trained to do so.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>gloves</strong> when handling cleaning solutions.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure <strong>proper ventilation</strong> when using strong cleaning solutions.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Lift properly</strong> when handling heavy mop buckets.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Change water frequently</strong> to prevent spreading dirt and bacteria.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">Mopping Floors</h1>
+    <p class="text-lg text-gray-500 mt-2">Interactive Training & Best Practices</p>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+    <a data-target="techniques" class="nav-link">🧹 Techniques</a>
+    <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <div id="guide" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Complete Mopping Guide</h2>
+      <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of the mopping process. Expand each section to see the detailed steps.</p>
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">Preparation & Setup</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Pre-Mopping Assessment:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Survey the area to identify heavily soiled spots, floor type (vinyl, tile, sealed wood, etc.), and any special requirements.</li>
+                  <li>Check for loose floorboards, damaged tiles, or uneven surfaces that could pose hazards.</li>
+                  <li>Remove small furniture or obstacles where possible.</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Safety Setup:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Place "Wet Floor" signs at all entrances to the area.</li>
+                  <li>Wear appropriate PPE: non-slip shoes, gloves, and apron if needed.</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Equipment Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Select the right mop for the job (microfiber, string, sponge, or flat mop).</li>
+                  <li>Fill the bucket with warm water (unless manufacturer specifies cold) and add the correct amount of cleaning solution.</li>
+                  <li>Have a separate bucket for rinse water if using a two-bucket system.</li>
+                  <li>Prepare clean, dry towels for spot drying if needed.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Mopping Procedure</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Dry Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Sweep or vacuum the floor thoroughly to remove loose dirt and debris.</li>
+                  <li>Spot clean any heavily soiled areas with appropriate cleaner before mopping the entire floor.</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Mopping Technique:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Dip the mop into the cleaning solution and wring it out to the proper dampness (not dripping wet).</li>
+                  <li>Start in the farthest corner and work your way toward the exit.</li>
+                  <li>Use a figure-eight motion or straight strokes, overlapping slightly with each pass.</li>
+                  <li>For two-bucket system: rinse mop in clean water after each section before dipping in cleaning solution.</li>
+                  <li>Change water when it becomes dirty or cloudy (typically every 200-300 sq ft).</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Special Areas:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Baseboards: Use a damp (not wet) mop or cloth along baseboards to prevent water damage.</li>
+                  <li>Corners: Use a smaller mop or hand-held scrubber for tight spaces.</li>
+                  <li>High-traffic areas: May require extra attention or a second pass.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Post-Mopping</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>Allow floors to air dry completely before removing "Wet Floor" signs.</li>
+              <li>Spot dry any remaining wet areas with clean, dry towels if needed.</li>
+              <li>Empty and rinse all buckets thoroughly.</li>
+              <li>Hang mops to dry completely in a well-ventilated area.</li>
+              <li>Return all furniture and items to their original positions.</li>
+              <li>Dispose of any waste properly.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="techniques" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Advanced Mopping Techniques</h2>
+      <p class="text-gray-600 mb-6">Master these techniques for optimal floor cleaning results.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">Two-Bucket Method</h3>
+          <p class="text-sm text-gray-600 mb-3">The most effective way to prevent dirt redistribution:</p>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Use one bucket for cleaning solution, one for rinse water</li>
+            <li>After mopping a section, rinse mop in the rinse bucket</li>
+            <li>Wring out thoroughly before dipping in cleaning solution</li>
+            <li>Change both buckets when water becomes dirty</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">Floor Mapping</h3>
+          <p class="text-sm text-gray-600 mb-3">Systematic approach for large areas:</p>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Divide large areas into manageable sections (e.g., 10x10 ft)</li>
+            <li>Work in a consistent pattern (left-to-right or top-to-bottom)</li>
+            <li>Overlap strokes by about 6 inches</li>
+            <li>Always move toward the exit to avoid walking on wet floors</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">Microfiber Mopping</h3>
+          <p class="text-sm text-gray-600 mb-3">For optimal results with modern systems:</p>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Use color-coded mops for different areas (e.g., red for restrooms)</li>
+            <li>Pre-treat heavily soiled areas with spray cleaner</li>
+            <li>Change microfiber pads frequently (every 150-200 sq ft)</li>
+            <li>Launder pads separately from other linens</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">Special Floor Types</h3>
+          <p class="text-sm text-gray-600 mb-3">Adjust techniques for different surfaces:</p>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Vinyl:</strong> Avoid excessive water, use pH-neutral cleaners</li>
+            <li><strong>Ceramic Tile:</strong> Can handle more water, focus on grout lines</li>
+            <li><strong>Sealed Wood:</strong> Damp mop only, never soak</li>
+            <li><strong>Concrete:</strong> May require degreaser for garage/workshop areas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="troubleshooting" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+      <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For persistent problems, consult a supervisor.</p>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Streaks or film left on floor</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Floor remains dirty after mopping</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Floor takes too long to dry</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Unpleasant odors after mopping</button></li>
+          </ul>
+        </div>
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select an issue from the list to view solutions here.</p>
+          </div>
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Streaks or Film on Floor</h3>
+            <p><strong>Possible Causes:</strong> Too much cleaning solution, improper rinsing, dirty mop or water, or residue from previous products.</p>
+            <p><strong>Solutions:</strong> Use less cleaner, rinse mop more frequently, change water more often, consider using a neutral pH cleaner to remove buildup, or use a clean microfiber mop for final pass.</p>
+          </div>
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Floor Remains Dirty</h3>
+            <p><strong>Possible Causes:</strong> Inadequate pre-sweeping, mop too wet/dry, incorrect cleaning solution, or water changed too infrequently.</p>
+            <p><strong>Solutions:</strong> Always sweep/vacuum first, adjust mop dampness, use a stronger cleaner for heavily soiled areas, change water every 200-300 sq ft, or consider using an auto-scrubber for very dirty floors.</p>
+          </div>
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Slow Drying</h3>
+            <p><strong>Possible Causes:</strong> Mop too wet, high humidity, poor ventilation, or incorrect technique.</p>
+            <p><strong>Solutions:</strong> Wring mop more thoroughly, use a flat mop system, improve ventilation, mop in smaller sections, or use a squeegee after mopping large areas.</p>
+          </div>
+          <div id="solution4" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Unpleasant Odors</h3>
+            <p><strong>Possible Causes:</strong> Dirty mop head, water not changed frequently, bacterial growth in bucket, or wrong cleaning product.</p>
+            <p><strong>Solutions:</strong> Clean and disinfect mop heads after each use, change water more often, sanitize buckets regularly, use a disinfectant cleaner, or try a citrus-based cleaner.</p>
+          </div>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">🛠️ Troubleshooting Videos</h3>
+          <p class="text-sm text-gray-600 mb-3">Explore common troubleshooting video guides for mopping.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/moppingvideo1" target="_blank" class="hover:underline">Video: Eliminating Streaks</a></li>
+            <li><a href="http://youtube.com/moppingvideo2" target="_blank" class="hover:underline">Video: Proper Wringing Techniques</a></li>
+            <li><a href="http://youtube.com/moppingvideo3" target="_blank" class="hover:underline">Video: Two-Bucket Method</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="resources" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+      <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📄 Cleaning Solution Guides</h3>
+          <p class="text-sm text-gray-600 mb-3">Access detailed product specifications and safety data sheets for approved cleaning solutions.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="file:///C:/Users/User1/Desktop/Web%20App/floor_cleaner_manual.pdf" target="_blank" class="hover:underline">Floor Cleaner Manual (Link)</a></li>
+            <li><a href="file:///C:/Users/User1/Desktop/Web%20App/msds_floor_cleaner.pdf" target="_blank" class="hover:underline">MSDS: Floor Cleaner (Link)</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Basic Mopping Techniques</h3>
+          <p class="text-sm text-gray-600 mb-3">A step-by-step video guide covering proper mopping techniques.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/moppingtutorial1" target="_blank" class="hover:underline">Video: Proper Mop Wringing</a></li>
+            <li><a href="http://youtube.com/moppingtutorial2" target="_blank" class="hover:underline">Video: Two-Bucket System</a></li>
+            <li><a href="http://youtube.com/moppingtutorial3" target="_blank" class="hover:underline">Video: Microfiber Mopping</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Advanced Techniques</h3>
+          <p class="text-sm text-gray-600 mb-3">For experienced staff: learn advanced floor care methods.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/moppingadvanced1" target="_blank" class="hover:underline">Video: Large Area Mopping</a></li>
+            <li><a href="http://youtube.com/moppingadvanced2" target="_blank" class="hover:underline">Video: Stubborn Stain Removal</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const safetyModal = document.getElementById('safety-modal');
+    const safetyModalContent = document.getElementById('safety-modal-content');
+    const safetyAck = document.getElementById('safety-ack');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+      safetyModalContent.style.opacity = '1';
+      safetyModalContent.style.transform = 'scale(1)';
+    }, 100);
+
+    safetyAck.addEventListener('change', () => {
+      proceedBtn.disabled = !safetyAck.checked;
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      safetyModal.style.transition = 'opacity 0.5s ease';
+      safetyModal.style.opacity = '0';
+      setTimeout(() => {
+        safetyModal.style.display = 'none';
+        mainContent.style.opacity = '1';
+      }, 500);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const target = link.getAttribute('data-target');
+        contentSections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === target) {
+            section.classList.add('active');
+          }
+        });
+      });
+    });
+
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+      const header = item.querySelector('.accordion-header');
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span');
+
+      header.addEventListener('click', () => {
+        const isOpen = content.style.maxHeight;
+
+        accordionItems.forEach(i => {
+          i.querySelector('.accordion-content').style.maxHeight = null;
+          i.querySelector('.accordion-content').style.padding = '0';
+          i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          content.style.maxHeight = (content.scrollHeight + 50) + "px";
+          content.style.padding = '1rem 1.5rem';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    const troubleItems = document.querySelectorAll('.trouble-item');
+    const solutionContents = document.querySelectorAll('.solution-content');
+    const solutionPlaceholder = document.getElementById('solution-placeholder');
+    troubleItems.forEach(item => {
+      item.addEventListener('click', () => {
+        troubleItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        solutionPlaceholder.style.display = 'none';
+
+        const targetSolution = document.getElementById(item.dataset.solution);
+        solutionContents.forEach(s => s.style.display = 'none');
+        if(targetSolution) {
+          targetSolution.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

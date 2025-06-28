@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proper Cloth Usage - Interactive Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link.active {
+      background-color: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .nav-link:not(.active):hover {
+      background-color: #E5E7EB;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .accordion-header {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    }
+    .trouble-item.active {
+      background-color: #EBF8FF;
+      border-left-color: #3B82F6;
+    }
+    .solution-content {
+      display: none;
+    }
+    .training-header {
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+    }
+    .microfiber-icon {
+      background: linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%);
+    }
+    .cotton-icon {
+      background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%);
+    }
+    .disposable-icon {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<div id="safety-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="safety-modal-content">
+    <h2 class="text-2xl md:text-3xl font-bold text-red-600 mb-4 flex items-center"><span class="text-4xl mr-3">⚠️</span> Safety First!</h2>
+    <p class="mb-6 text-gray-600">Before proceeding, you must read and acknowledge the following critical safety protocols for proper cloth usage. Your safety is our top priority.</p>
+    <div class="space-y-4 max-h-60 overflow-y-auto pr-4 text-sm">
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Always wear <strong>protective gloves</strong> when handling cleaning chemicals.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>appropriate signage</strong> ("Wet Floor") when cleaning public areas.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Never mix <strong>different cleaning chemicals</strong> on the same cloth.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Use <strong>ergonomic techniques</strong> to prevent strain when wiping surfaces.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Color-code cloths</strong> to prevent cross-contamination between areas.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span>Ensure <strong>proper ventilation</strong> when using cleaning solutions.</span></div>
+      <div class="flex items-start"><span class="mr-2 mt-1 text-red-500">●</span><span><strong>Wash hands thoroughly</strong> after handling used cleaning cloths.</span></div>
+    </div>
+    <div class="mt-8">
+      <label for="safety-ack" class="flex items-center cursor-pointer">
+        <input type="checkbox" id="safety-ack" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-3 text-gray-700">I have read and understood these safety protocols.</span>
+      </label>
+    </div>
+    <div class="mt-6 text-right">
+      <button id="proceed-btn" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>Proceed to Training</button>
+    </div>
+  </div>
+</div>
+
+<main id="main-content" class="container mx-auto p-4 md:p-8 opacity-0 transition-opacity duration-500">
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900">Proper Cleaning Cloth Usage</h1>
+    <p class="text-lg text-gray-500 mt-2">Interactive Training & Best Practices</p>
+  </header>
+
+  <nav class="bg-white rounded-lg shadow-md p-2 mb-8 flex flex-wrap items-center justify-center gap-2">
+    <a data-target="guide" class="nav-link active">📖 Full Guide</a>
+    <a data-target="techniques" class="nav-link">🧽 Techniques</a>
+    <a data-target="troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+    <a data-target="resources" class="nav-link">🔗 Resources</a>
+  </nav>
+
+  <div id="guide" class="content-section active">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Complete Cloth Usage Guide</h2>
+      <p class="text-gray-600 mb-6">This guide provides a comprehensive walkthrough of proper cleaning cloth procedures. Expand each section to see the detailed steps.</p>
+      <div class="space-y-4">
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-t-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-black">Preparation & Setup</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Pre-Cleaning Assessment:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Identify surface type (delicate, porous, high-touch, etc.)</li>
+                  <li>Determine appropriate cleaning solution for the surface</li>
+                  <li>Assess soil level to select proper cloth type</li>
+                  <li>Plan cleaning path from cleanest to dirtiest areas</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Safety Setup:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Place "Cleaning in Progress" signs if working in public areas</li>
+                  <li>Wear appropriate PPE: gloves and apron if needed</li>
+                  <li>Ensure proper ventilation in the cleaning area</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Cloth & Equipment Preparation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Select the right cloth type for the job (microfiber, cotton, disposable)</li>
+                  <li>Prepare cleaning solution as per manufacturer instructions</li>
+                  <li>Have clean water bucket and waste bin ready</li>
+                  <li>Ensure cloths are clean and in good condition</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Proper Wiping Technique</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Cloth Folding Method:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Fold cloth into 4 or 8 sections to maximize clean surface area</li>
+                  <li>For large surfaces: fold in quarters for easy flipping</li>
+                  <li>For detailed work: fold into smaller sections</li>
+                  <li>Always keep one clean side folded inward</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Solution Application:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Spray solution directly on surface, not the cloth (when possible)</li>
+                  <li>If spraying on cloth, use light mist to avoid oversaturation</li>
+                  <li>For disinfecting: ensure cloth remains wet for required contact time</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Wiping Motion:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Use straight-line, overlapping strokes in one direction</li>
+                  <li>Apply even pressure - let the cloth do the work</li>
+                  <li>Work from top to bottom, cleanest to dirtiest areas</li>
+                  <li>Flip to clean section as cloth becomes soiled</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Color-Coding System</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li class="text-black">
+                <strong class="font-semibold text-black">Standard Color Coding:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li><span class="font-bold text-red-600">Red:</span> Toilets and bathroom surfaces</li>
+                  <li><span class="font-bold text-blue-600">Blue:</span> General surfaces and glass</li>
+                  <li><span class="font-bold text-green-600">Green:</span> Food preparation areas</li>
+                  <li><span class="font-bold text-yellow-600">Yellow:</span> High-touch surfaces (door handles, light switches)</li>
+                  <li><span class="font-bold text-purple-600">Purple:</span> Specialized disinfectant applications</li>
+                </ul>
+              </li>
+              <li class="text-black">
+                <strong class="font-semibold text-black">Implementation:</strong>
+                <ul class="list-disc list-outside pl-6 space-y-1">
+                  <li>Train all staff on color-coding system</li>
+                  <li>Store cloths separately by color</li>
+                  <li>Use matching colored buckets for each type</li>
+                  <li>Regularly audit compliance with the system</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-200 rounded-lg">
+          <div class="accordion-header bg-gray-100 hover:bg-gray-200 p-4 rounded-b-lg flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Post-Cleaning</h3>
+            <span class="transform transition-transform duration-300">▼</span>
+          </div>
+          <div class="accordion-content">
+            <ul class="p-4 md:p-6 space-y-3 text-gray-700 list-inside">
+              <li>Dispose of disposable cloths properly</li>
+              <li>Separate reusable cloths by color for laundering</li>
+              <li>Wash cloths at appropriate temperature (60°C/140°F for disinfection)</li>
+              <li>Hang cloths to dry completely before storage</li>
+              <li>Store clean cloths in sealed containers by color</li>
+              <li>Report any damaged or heavily stained cloths for replacement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="techniques" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Advanced Techniques</h2>
+      <p class="text-gray-600 mb-6">Master these techniques for optimal cleaning results and efficiency.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50 microfiber-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🧽</span>
+            <h3 class="font-semibold text-lg">Microfiber Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Dusting:</strong> Use dry for dust attraction</li>
+            <li><strong>Cleaning:</strong> Dampen with water or mild solution</li>
+            <li><strong>Folding:</strong> 8-section fold for maximum efficiency</li>
+            <li><strong>Care:</strong> Wash separately, no fabric softener</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 cotton-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🧵</span>
+            <h3 class="font-semibold text-lg">Cotton Cloth Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Absorption:</strong> Ideal for spills and wet surfaces</li>
+            <li><strong>Polishing:</strong> Use dry for streak-free shine</li>
+            <li><strong>Folding:</strong> Quarter-fold for most applications</li>
+            <li><strong>Care:</strong> Hot wash with bleach for disinfection</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50 disposable-icon">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🧻</span>
+            <h3 class="font-semibold text-lg">Disposable Wipe Techniques</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>High-risk areas:</strong> Use for bathrooms and medical areas</li>
+            <li><strong>Technique:</strong> One wipe per surface area</li>
+            <li><strong>Disposal:</strong> Immediately after use</li>
+            <li><strong>Safety:</strong> Never flush disposable wipes</li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <div class="flex items-center mb-3">
+            <span class="text-2xl mr-3">🔍</span>
+            <h3 class="font-semibold text-lg">Special Surface Handling</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li><strong>Electronics:</strong> Use microfiber, slightly damp</li>
+            <li><strong>Stainless steel:</strong> Wipe with grain, polish dry</li>
+            <li><strong>Glass:</strong> Use lint-free cloth, no circular motions</li>
+            <li><strong>Wood:</strong> Damp cloth only, dry immediately</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="troubleshooting" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Interactive Troubleshooting</h2>
+      <p class="text-gray-600 mb-6">Select an issue to see possible causes and solutions. For persistent problems, consult a supervisor.</p>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-1/3">
+          <ul class="space-y-2">
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution1">Streaks left on surfaces</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution2">Lint or fibers left behind</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution3">Surface still dirty after wiping</button></li>
+            <li><button class="trouble-item w-full text-left p-3 border-l-4 border-gray-200 bg-gray-100 hover:bg-gray-200 rounded-r-md transition" data-solution="solution4">Cloth wears out too quickly</button></li>
+          </ul>
+        </div>
+        <div class="md:w-2/3">
+          <div id="solution-placeholder" class="text-center text-gray-500 p-8 bg-gray-50 rounded-lg">
+            <p>Select an issue from the list to view solutions here.</p>
+          </div>
+          <div id="solution1" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Streaks Left on Surfaces</h3>
+            <p><strong>Possible Causes:</strong> Dirty cloth, wrong cloth type, too much cleaning solution, or improper wiping technique.</p>
+            <p><strong>Solutions:</strong> Use clean microfiber cloth, reduce solution amount, wipe in one direction only, polish with dry cloth after cleaning.</p>
+          </div>
+          <div id="solution2" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Lint or Fibers Left Behind</h3>
+            <p><strong>Possible Causes:</strong> Low-quality cotton cloth, fabric softener residue, or cloth not properly rinsed.</p>
+            <p><strong>Solutions:</strong> Use microfiber or lint-free cloths, avoid fabric softener when laundering, rinse cloths thoroughly after washing.</p>
+          </div>
+          <div id="solution3" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Surface Still Dirty After Wiping</h3>
+            <p><strong>Possible Causes:</strong> Not enough cleaning solution, wrong cleaning product, or cloth not changed frequently enough.</p>
+            <p><strong>Solutions:</strong> Pre-treat heavy soil, use appropriate cleaner for the soil type, change cloth sections more often, scrub stubborn spots first.</p>
+          </div>
+          <div id="solution4" class="solution-content">
+            <h3 class="text-xl font-semibold mb-3">Solution for: Cloth Wears Out Too Quickly</h3>
+            <p><strong>Possible Causes:</strong> Harsh chemicals, high-temperature washing, or abrasive surfaces.</p>
+            <p><strong>Solutions:</strong> Use milder cleaning solutions, wash at recommended temperatures, separate cloths for different surface types, inspect regularly.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 border p-4 rounded-lg bg-gray-50">
+        <h3 class="font-semibold text-lg mb-2">🛠️ Troubleshooting Videos</h3>
+        <p class="text-sm text-gray-600 mb-3">Explore common troubleshooting video guides for proper cloth usage.</p>
+        <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+          <li><a href="http://youtube.com/clothvideo1" target="_blank" class="hover:underline">Video: Proper Cloth Folding Techniques</a></li>
+          <li><a href="http://youtube.com/clothvideo2" target="_blank" class="hover:underline">Video: Eliminating Streaks</a></li>
+          <li><a href="http://youtube.com/clothvideo3" target="_blank" class="hover:underline">Video: Color-Coding System Explained</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="resources" class="content-section">
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-2">Official Resources & Video Library</h2>
+      <p class="text-gray-600 mb-6">Use these links for further details. Videos are highly recommended for visual learners.</p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📄 Cleaning Solution Guides</h3>
+          <p class="text-sm text-gray-600 mb-3">Access detailed product specifications and safety data sheets for approved cleaning solutions.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Surface Cleaner Manual (Link)</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">MSDS: Disinfectant Solution (Link)</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Basic Cloth Techniques</h3>
+          <p class="text-sm text-gray-600 mb-3">A step-by-step video guide covering proper cloth usage techniques.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/clothtutorial1" target="_blank" class="hover:underline">Video: Folding & Wiping Techniques</a></li>
+            <li><a href="http://youtube.com/clothtutorial2" target="_blank" class="hover:underline">Video: Color-Coding System</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">▶️ Video: Advanced Techniques</h3>
+          <p class="text-sm text-gray-600 mb-3">For experienced staff: learn advanced cloth usage methods.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="http://youtube.com/clothadvanced1" target="_blank" class="hover:underline">Video: Specialty Surface Cleaning</a></li>
+            <li><a href="http://youtube.com/clothadvanced2" target="_blank" class="hover:underline">Video: Efficient Workflow with Cloths</a></li>
+          </ul>
+        </div>
+        <div class="border p-4 rounded-lg bg-gray-50">
+          <h3 class="font-semibold text-lg mb-2">📊 Infographic: Cloth Types</h3>
+          <p class="text-sm text-gray-600 mb-3">Quick reference guide to cloth types and their best uses.</p>
+          <ul class="list-disc list-inside text-blue-600 text-sm space-y-1">
+            <li><a href="#" target="_blank" class="hover:underline">Download Cloth Selection Guide (PDF)</a></li>
+            <li><a href="#" target="_blank" class="hover:underline">Color-Coding Poster (PDF)</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const safetyModal = document.getElementById('safety-modal');
+    const safetyModalContent = document.getElementById('safety-modal-content');
+    const safetyAck = document.getElementById('safety-ack');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const mainContent = document.getElementById('main-content');
+
+    setTimeout(() => {
+      safetyModalContent.style.opacity = '1';
+      safetyModalContent.style.transform = 'scale(1)';
+    }, 100);
+
+    safetyAck.addEventListener('change', () => {
+      proceedBtn.disabled = !safetyAck.checked;
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      safetyModal.style.transition = 'opacity 0.5s ease';
+      safetyModal.style.opacity = '0';
+      setTimeout(() => {
+        safetyModal.style.display = 'none';
+        mainContent.style.opacity = '1';
+      }, 500);
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        const target = link.getAttribute('data-target');
+        contentSections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === target) {
+            section.classList.add('active');
+          }
+        });
+      });
+    });
+
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    accordionItems.forEach(item => {
+      const header = item.querySelector('.accordion-header');
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span');
+
+      header.addEventListener('click', () => {
+        const isOpen = content.style.maxHeight;
+
+        accordionItems.forEach(i => {
+          i.querySelector('.accordion-content').style.maxHeight = null;
+          i.querySelector('.accordion-content').style.padding = '0';
+          i.querySelector('.accordion-header span').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          content.style.maxHeight = (content.scrollHeight + 50) + "px";
+          content.style.padding = '1rem 1.5rem';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    const troubleItems = document.querySelectorAll('.trouble-item');
+    const solutionContents = document.querySelectorAll('.solution-content');
+    const solutionPlaceholder = document.getElementById('solution-placeholder');
+    troubleItems.forEach(item => {
+      item.addEventListener('click', () => {
+        troubleItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        solutionPlaceholder.style.display = 'none';
+
+        const targetSolution = document.getElementById(item.dataset.solution);
+        solutionContents.forEach(s => s.style.display = 'none');
+        if(targetSolution) {
+          targetSolution.style.display = 'block';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
