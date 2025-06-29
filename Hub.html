@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    /* Animation for fade-in effect */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
@@ -15,16 +14,14 @@
     .animate-fade-in {
         animation: fadeIn 0.8s ease-out forwards;
     }
-    /* Style for the logout button with improved hover effects */
     .logout-button {
         @apply bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out;
-        display: none; /* Hidden by default, shown by JS when logged in */
+        display: none;
     }
     .logout-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    /* Softer shadow for cards */
     .shadow-soft {
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
@@ -35,23 +32,36 @@
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-white font-sans">
 
-  <header class="bg-white shadow p-4 flex items-center justify-between">
+  <!-- Header with Responsive Nav -->
+  <header class="bg-white shadow p-4 flex flex-wrap items-center justify-between">
     <div class="flex items-center gap-3">
       <img src="Images/logo.png" alt="Company Logo" class="h-10 w-auto">
       <h1 class="text-2xl font-bold text-gray-800">OptimalFM Hub</h1>
     </div>
-    <nav class="flex gap-6 text-gray-700 font-medium">
+
+    <!-- Hamburger Toggle -->
+    <button id="nav-toggle" class="md:hidden text-gray-700 focus:outline-none">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Navigation Links -->
+    <nav id="nav-menu" class="w-full md:w-auto md:flex hidden flex-col md:flex-row gap-4 mt-4 md:mt-0 text-gray-700 font-medium">
       <a href="Index.html" class="hover:text-blue-600 transition-colors duration-200">Home</a>
       <a href="training.html" class="hover:text-blue-600 transition-colors duration-200">Training</a>
       <a href="Company%20Policies%20&%20Documents.html" class="hover:text-blue-600 transition-colors duration-200">Policies</a>
       <a href="Onboarding%20&%20Resources.html" class="hover:text-blue-600 transition-colors duration-200">Resources</a>
     </nav>
-    <div class="flex items-center gap-4">
-        <span id="userName" class="text-gray-700 font-medium hidden"></span>
-        <button id="logout-button" class="logout-button">Logout</button>
+
+    <div class="hidden md:flex items-center gap-4">
+      <span id="userName" class="text-gray-700 font-medium hidden"></span>
+      <button id="logout-button" class="logout-button">Logout</button>
     </div>
   </header>
 
+  <!-- Main Content -->
   <main class="p-10 text-center max-w-4xl mx-auto">
     <h2 class="text-4xl font-extrabold text-gray-800 mb-4 animate-fade-in">Welcome to Your OptimalFM Hub</h2>
     <p class="text-gray-600 text-lg mb-8">Everything you need for onboarding, training, and policies—all in one place.</p>
@@ -81,124 +91,103 @@
     &copy; 2025 OptimalFM. All rights reserved.
   </footer>
 
+  <!-- Firebase Authentication & Logout Logic -->
   <script type="module">
-    // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-    // *** IMPORTANT FIX: Added setDoc, collection, addDoc, serverTimestamp to Firestore import ***
     import { getFirestore, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
-    // Your web app's Firebase configuration (provided by user previously)
     const firebaseConfig = {
-        apiKey: "AIzaSyDzi14Sitd7W0g66XOUJig2kMs7as17tXw",
-        authDomain: "my-optimal-user-database.firebaseapp.com",
-        projectId: "my-optimal-user-database",
-        storageBucket: "my-optimal-user-database.firebasestorage.app",
-        messagingSenderId: "105788218776",
-        appId: "1:105788218776:web:ef0621a5f264ab1a3c9fed",
-        measurementId: "G-2CVSG54PHE"
+      apiKey: "AIzaSyDzi14Sitd7W0g66XOUJig2kMs7as17tXw",
+      authDomain: "my-optimal-user-database.firebaseapp.com",
+      projectId: "my-optimal-user-database",
+      storageBucket: "my-optimal-user-database.firebasestorage.app",
+      messagingSenderId: "105788218776",
+      appId: "1:105788218776:web:ef0621a5f264ab1a3c9fed",
+      measurementId: "G-2CVSG54PHE"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
-    // Define appId from the provided config
     const appId = firebaseConfig.projectId;
 
     const userNameSpan = document.getElementById('userName');
     const logoutButton = document.getElementById('logout-button');
 
-    // Function to log login event
     async function logLoginEvent(userId, loginType = 'session_restore') {
-        if (!userId) return; // Ensure userId exists
-        try {
-            const loginHistoryRef = collection(db, `artifacts/${appId}/users/${userId}/loginHistory`);
-            await addDoc(loginHistoryRef, {
-                timestamp: serverTimestamp(), // Use server timestamp for accuracy
-                type: loginType,
-                page: window.location.pathname // Log the page where login was detected
-            });
-            console.log(`Login event logged for user: ${userId} on page: ${window.location.pathname}`);
-        } catch (error) {
-            console.error("Error logging login event:", error);
-        }
+      if (!userId) return;
+      try {
+        const loginHistoryRef = collection(db, `artifacts/${appId}/users/${userId}/loginHistory`);
+        await addDoc(loginHistoryRef, {
+          timestamp: serverTimestamp(),
+          type: loginType,
+          page: window.location.pathname
+        });
+      } catch (error) {
+        console.error("Error logging login event:", error);
+      }
     }
 
-    // Authentication state listener and redirection logic
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            // User is signed in. Display name and show logout button.
-            const userRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/details`);
-            try {
-                const userDoc = await getDoc(userRef);
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    userNameSpan.textContent = `Welcome, ${userData.displayName || user.email || 'User'}!`;
-                    // Update last login timestamp
-                    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
-                } else {
-                    // Create a basic profile if it doesn't exist (should ideally happen on signup, but good fallback)
-                    await setDoc(userRef, {
-                        uid: user.uid,
-                        email: user.email || 'N/A',
-                        displayName: user.email ? user.email.split('@')[0] : 'Guest User',
-                        mobileNumber: 'N/A', // Default value
-                        jobTitle: 'N/A',     // Default value
-                        teamDepartment: 'N/A', // Default value
-                        createdAt: new Date().toISOString(),
-                        lastLogin: new Date().toISOString(),
-                        employeeId: user.uid
-                    });
-                }
-                userNameSpan.classList.remove('hidden');
-                logoutButton.style.display = 'block'; // Show the logout button
-
-                // Log the login event when authenticated user is detected on the page
-                // This will catch initial logins and subsequent page navigations by an authenticated user
-                await logLoginEvent(user.uid);
-
-            } catch (error) {
-                console.error("Error fetching user profile or logging login event:", error);
-                userNameSpan.textContent = `Welcome, ${user.email || 'User'}!`; // Fallback display
-                userNameSpan.classList.remove('hidden');
-                logoutButton.style.display = 'block';
-            }
-        } else {
-            // No user logged in, redirect to login page
-            console.log("No user signed in. Redirecting to login page.");
-            window.location.href = 'login.html'; // Assuming login.html is the correct path
+      if (user) {
+        const userRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile/details`);
+        try {
+          const userDoc = await getDoc(userRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            userNameSpan.textContent = `Welcome, ${userData.displayName || user.email || 'User'}!`;
+            await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
+          } else {
+            await setDoc(userRef, {
+              uid: user.uid,
+              email: user.email || 'N/A',
+              displayName: user.email ? user.email.split('@')[0] : 'Guest User',
+              mobileNumber: 'N/A',
+              jobTitle: 'N/A',
+              teamDepartment: 'N/A',
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString(),
+              employeeId: user.uid
+            });
+          }
+          userNameSpan.classList.remove('hidden');
+          logoutButton.style.display = 'block';
+          await logLoginEvent(user.uid);
+        } catch (error) {
+          console.error("Error fetching user profile or logging login event:", error);
+          userNameSpan.textContent = `Welcome, ${user.email || 'User'}!`;
+          userNameSpan.classList.remove('hidden');
+          logoutButton.style.display = 'block';
         }
+      } else {
+        console.log("No user signed in. Redirecting to login page.");
+        window.location.href = 'login.html';
+      }
     });
 
-    // Logout Logic
     if (logoutButton) {
-        logoutButton.addEventListener('click', async () => {
-            try {
-                // This is the Firebase sign out function
-                await signOut(auth);
-                // Redirect the user to the login page after successful logout
-                window.location.href = 'login.html';
-                console.log('User signed out successfully.');
-            } catch (error) {
-                console.error('Error signing out:', error);
-                // Using a message box instead of alert as per initial instructions
-                // A `showMessage` function would be needed if this page is standalone.
-                // For now, will use a simple console log for error feedback.
-                console.error('Error logging out. Please try again.');
-            }
-        });
+      logoutButton.addEventListener('click', async () => {
+        try {
+          await signOut(auth);
+          window.location.href = 'login.html';
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      });
     }
   </script>
 
-<script>
-  const navToggle = document.getElementById('nav-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('hidden');
-  });
-</script>
+  <!-- Hamburger Toggle Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navToggle = document.getElementById('nav-toggle');
+      const navMenu = document.getElementById('nav-menu');
+      navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('hidden');
+      });
+    });
+  </script>
 
 </body>
 </html>
