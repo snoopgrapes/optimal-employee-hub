@@ -42,7 +42,7 @@
     </div>
     <nav class="flex gap-6 text-gray-700 font-medium">
       <a href="Index.html" class="hover:text-blue-600 transition-colors duration-200">Home</a>
-      <a href="file:///C:/Users/User1/Desktop/Optimal-Hub/training.html" class="hover:text-blue-600 transition-colors duration-200">Training</a>
+      <a href="training.html" class="hover:text-blue-600 transition-colors duration-200">Training</a>
       <a href="Company%20Policies%20&%20Documents.html" class="hover:text-blue-600 transition-colors duration-200">Policies</a>
       <a href="Onboarding%20&%20Resources.html" class="hover:text-blue-600 transition-colors duration-200">Resources</a>
     </nav>
@@ -57,7 +57,7 @@
     <p class="text-gray-600 text-lg mb-8">Everything you need for onboarding, training, and policies—all in one place.</p>
 
     <div class="grid gap-6 sm:grid-cols-2 mt-10">
-      <a href="Hub%20Page.html#training" class="bg-white p-6 rounded-lg shadow-soft hover:shadow-soft-lg transition transform hover:-translate-y-1 hover:bg-blue-50">
+      <a href="training.html" class="bg-white p-6 rounded-lg shadow-soft hover:shadow-soft-lg transition transform hover:-translate-y-1 hover:bg-blue-50">
         <div class="text-4xl mb-2">📘</div>
         <h3 class="font-bold text-xl text-gray-800 mb-1">Training & Development</h3>
         <p class="text-gray-600 text-sm">Access training modules and skill-building resources.</p>
@@ -111,7 +111,7 @@
     const logoutButton = document.getElementById('logout-button');
 
     // Function to log login event
-    async function logLogin event(userId, loginType = 'session_restore') {
+    async function logLoginEvent(userId, loginType = 'session_restore') {
         if (!userId) return; // Ensure userId exists
         try {
             const loginHistoryRef = collection(db, `artifacts/${appId}/users/${userId}/loginHistory`);

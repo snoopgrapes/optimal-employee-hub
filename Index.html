@@ -41,7 +41,6 @@
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-white flex items-center justify-center min-h-screen">
 
-    <!-- Message Box for Alerts -->
     <div id="messageBox" class="message-box"></div>
 
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
@@ -55,7 +54,6 @@
             <button id="signUpTab" class="tab-button flex-1">Sign Up</button>
         </div>
 
-        <!-- Sign In Form -->
         <form id="signInForm" class="space-y-6">
             <div>
                 <label for="signInEmail" class="block text-sm font-medium text-gray-700">Email address</label>
@@ -79,7 +77,6 @@
             </div>
         </form>
 
-        <!-- Sign Up Form -->
         <form id="signUpForm" class="space-y-6 hidden">
             <div>
                 <label for="signUpFullName" class="block text-sm font-medium text-gray-700">Full Name</label>
@@ -130,7 +127,6 @@
         </form>
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
@@ -252,7 +248,7 @@
                 // Log the login event
                 await logLoginEvent(user.uid);
 
-                window.location.href = 'Index.html'; // Redirect to main hub page
+                window.location.href = 'Hub.html'; // Redirect to main hub page
             } else {
                 console.log("No user signed in. Staying on login/signup page.");
             }
