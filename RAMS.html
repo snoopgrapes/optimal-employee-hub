@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Policy Acknowledgement</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+
+  <div class="w-full max-w-5xl bg-white shadow rounded-lg p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">📄 Policy Document</h1>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-4 mb-4">
+      <a href="docs/sample.pdf" download class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Download PDF</a>
+      <button onclick="printPDF()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Print PDF</button>
+    </div>
+
+	<!-- PDF Viewer -->
+	<div class="w-full mb-6 border rounded overflow-hidden" style="height: calc(100vh - 250px);">
+		<iframe id="pdfFrame" src="docs/sample.pdf" type="application/pdf" class="w-full h-full" frameborder="0"></iframe>
+		</div>
+
+    <!-- Confirmation Form -->
+    <form id="confirmForm" class="space-y-4">
+      <label class="flex items-start gap-3 text-gray-700">
+        <input type="checkbox" id="confirmCheckbox" class="mt-1 w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" required>
+        <span>I have read and understood the contents of the document above.</span>
+      </label>
+
+      <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition">
+        Confirm Acknowledgment
+      </button>
+    </form>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="hidden mt-4 p-4 bg-green-100 text-green-700 rounded">
+      ✅ Thank you! Your acknowledgment has been recorded.
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const form = document.getElementById('confirmForm');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      form.classList.add('hidden');
+      successMessage.classList.remove('hidden');
+      console.log('User has confirmed reading the document.');
+    });
+
+    function printPDF() {
+      const iframe = document.getElementById('pdfFrame');
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+  </script>
+
+</body>
+</html>
